@@ -27,7 +27,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
-                ApiResponce<QuestionGet> responce = new ApiResponce<QuestionGet>();
+                ApiResponse<QuestionGet> response = new ApiResponse<QuestionGet>();
 
                 var question = await questionService.GetById(id);
                 var professionFirst = await professionService.GetById(question.ProfessionIdFirst);
@@ -52,13 +52,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 questionGet.professions.Add(professionGetFirst);
                 questionGet.professions.Add(professionGetSecond);
 
-                responce.Data = questionGet;
+                response.Data = questionGet;
 
-                return Json(responce);
+                return Json(response);
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                ApiResponse<Object> response = new ApiResponse<Object>();
+                response.ErrorMessage = "Couldn't get question : " + ex.Message;
+                return Json(response);
             }
         }
 
@@ -67,7 +69,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
-                ApiResponce<List<QuestionGet>> responce = new ApiResponce<List<QuestionGet>>();
+                ApiResponse<List<QuestionGet>> responce = new ApiResponse<List<QuestionGet>>();
                 List<QuestionGet> questions = new List<QuestionGet>();
                 
                 var _questions = await questionService.GetAll();
@@ -105,7 +107,9 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex) 
             {
-                throw new Exception(ex.Message);
+                ApiResponse<Object> response = new ApiResponse<Object>();
+                response.ErrorMessage = "Couldn't get questions : " + ex.Message;
+                return Json(response);
             }
         }
     }

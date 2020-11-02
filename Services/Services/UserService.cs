@@ -49,8 +49,10 @@ namespace Service.Services
                 newUser.Password = password;
 
                 newUser = await userRepository.CreateUser(newUser);
+
+                return newUser;
             }
-            return newUser;
+            return newUser = null;
         }
 
         public async Task<User> Update(int id, bool isAdmin, string login, string email, DateTime birthdate, bool isMan, string password)
@@ -85,8 +87,10 @@ namespace Service.Services
                 updatedUser.Password = password;
 
                 updatedUser = await userRepository.UpdateUser(updatedUser);
+
+                return updatedUser;
             }
-            return updatedUser;
+            return updatedUser = null;
         }
     }
 }

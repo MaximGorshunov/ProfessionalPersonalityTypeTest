@@ -5,6 +5,8 @@ using Service.IServices;
 using ProfessionalPersonalityTypeTest.Models;
 using System.Collections.Generic;
 using System.Linq;
+using ProfessionalPersonalityTypeTest.Helpers;
+using Models;
 
 namespace ProfessionalPersonalityTypeTest.Controllers
 {
@@ -34,18 +36,21 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 _user.Birthdate = user.Birthdate;
                 _user.IsMan = user.IsMan;
 
-                ApiResponce<UserGet> responce = new ApiResponce<UserGet>();
+                ApiResponse<UserGet> response = new ApiResponse<UserGet>();
 
-                responce.Data = _user;
+                response.Data = _user;
                 
-                return Json(responce);
+                return Json(response);
             }
             catch(Exception ex)
             {
-                throw new Exception(ex.Message);
+                ApiResponse<Object> response = new ApiResponse<Object>();
+                response.ErrorMessage = "Couldn't get user : " + ex.Message;
+                return Json(response);
             }
         }
 
+        [Authorize]
         [HttpGet("getAll")]
         public async Task<IActionResult> GetAll()
         {
@@ -59,15 +64,17 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                                                              Birthdate = u.Birthdate,
                                                              IsMan = u.IsMan }).ToList();
                 
-                ApiResponce<List<UserGet>> responce = new ApiResponce<List<UserGet>>();
+                ApiResponse<List<UserGet>> response = new ApiResponse<List<UserGet>>();
                 
-                responce.Data = _users;
+                response.Data = _users;
                 
-                return Json(responce);
+                return Json(response);
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                ApiResponse<Object> response = new ApiResponse<Object>();
+                response.ErrorMessage = "Couldn't get users : " + ex.Message;
+                return Json(response);
             }
         }
 
@@ -77,6 +84,14 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             try
             {
                 var user = await userService.Create(userCreate.IsAdmin, userCreate.Login, userCreate.Email, userCreate.Birthdate, userCreate.IsMan, userCreate.Password);
+                ApiResponse<UserGet> response = new ApiResponse<UserGet>();
+
+                if (user == null)
+                {
+                    response.ErrorMessage = "User with such login or email already exists";
+                    return Json(response);
+                }
+
                 UserGet _user = new UserGet();
 
                 _user.Id = user.Id;
@@ -86,15 +101,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 _user.Birthdate = user.Birthdate;
                 _user.IsMan = user.IsMan;
 
-                ApiResponce<UserGet> responce = new ApiResponce<UserGet>();
+                response.Data = _user;
 
-                responce.Data = _user;
-
-                return Json(responce);
+                return Json(response);
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                ApiResponse<Object> response = new ApiResponse<Object>();
+                response.ErrorMessage = "Couldn't create user : " + ex.Message;
+                return Json(response);
             }
         }
 
@@ -104,6 +119,14 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             try
             {
                 var user = await userService.Update(userUpdate.Id, userUpdate.IsAdmin, userUpdate.Login, userUpdate.Email, userUpdate.Birthdate, userUpdate.IsMan, userUpdate.Password);
+                ApiResponse<UserGet> response = new ApiResponse<UserGet>();
+
+                if (user == null)
+                {
+                    response.ErrorMessage = "User with such login or email already exists";
+                    return Json(response);
+                }
+
                 UserGet _user = new UserGet();
 
                 _user.Id = user.Id;
@@ -113,15 +136,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 _user.Birthdate = user.Birthdate;
                 _user.IsMan = user.IsMan;
 
-                ApiResponce<UserGet> responce = new ApiResponce<UserGet>();
+                response.Data = _user;
 
-                responce.Data = _user;
-
-                return Json(responce);
+                return Json(response);
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                ApiResponse<Object> response = new ApiResponse<Object>();
+                response.ErrorMessage = "Couldn't update user : " + ex.Message;
+                return Json(response);
             }
         }
 
@@ -130,13 +153,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
-                ApiResponce<int> responce = new ApiResponce<int>();
-                responce.Data = await userService.Delete(id);
-                return Json(responce);
+                ApiResponse<int> response = new ApiResponse<int>();
+                response.Data = await userService.Delete(id);
+                return Json(response);
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                ApiResponse<Object> response = new ApiResponse<Object>();
+                response.ErrorMessage = "Couldn't delete user : " + ex.Message;
+                return Json(response);
             }
         }
     }

@@ -37,15 +37,17 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 _userResult.E = userResult.E;
                 _userResult.C = userResult.C;
 
-                ApiResponce<UserResultGet> responce = new ApiResponce<UserResultGet>();
+                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
 
-                responce.Data = _userResult;
+                response.Data = _userResult;
 
-                return Json(responce);
+                return Json(response);
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                ApiResponse<Object> response = new ApiResponse<Object>();
+                response.ErrorMessage = "Couldn't get user result : " + ex.Message;
+                return Json(response);
             }
         }
 
@@ -68,15 +70,17 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                     C = u.C
                 }).ToList();
 
-                ApiResponce<List<UserResultGet>> responce = new ApiResponce<List<UserResultGet>>();
+                ApiResponse<List<UserResultGet>> response = new ApiResponse<List<UserResultGet>>();
 
-                responce.Data = _userResults;
+                response.Data = _userResults;
 
-                return Json(responce);
+                return Json(response);
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                ApiResponse<Object> response = new ApiResponse<Object>();
+                response.ErrorMessage = "Couldn't get users results : " + ex.Message;
+                return Json(response);
             }
         }
 
@@ -87,6 +91,14 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             {
                 var userResult = await userResultService.Create(userResultCreate.UserId, 
                                                           userResultCreate.R, userResultCreate.I, userResultCreate.A, userResultCreate.S, userResultCreate.E, userResultCreate.C);
+                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
+
+                if(userResult == null)
+                {
+                    response.ErrorMessage = "Invalid user identity public key";
+                    return Json(response);
+                }
+
                 UserResultGet _userResult = new UserResultGet();
 
                 _userResult.Id = userResult.Id;
@@ -99,15 +111,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 _userResult.E = userResult.E;
                 _userResult.C = userResult.C;
 
-                ApiResponce<UserResultGet> responce = new ApiResponce<UserResultGet>();
+                response.Data = _userResult;
 
-                responce.Data = _userResult;
-
-                return Json(responce);
+                return Json(response);
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                ApiResponse<Object> response = new ApiResponse<Object>();
+                response.ErrorMessage = "Couldn't create user result : " + ex.Message;
+                return Json(response);
             }
         }
 
@@ -118,6 +130,14 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             {
                 var userResult = await userResultService.Update(userResultUpdate.Id,
                                                         userResultUpdate.R, userResultUpdate.I, userResultUpdate.A, userResultUpdate.S, userResultUpdate.E, userResultUpdate.C);
+                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
+
+                if (userResult == null)
+                {
+                    response.ErrorMessage = "Invalid identity public key";
+                    return Json(response);
+                }
+
                 UserResultGet _userResult = new UserResultGet();
 
                 _userResult.Id = userResult.Id;
@@ -130,15 +150,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 _userResult.E = userResult.E;
                 _userResult.C = userResult.C;
 
-                ApiResponce<UserResultGet> responce = new ApiResponce<UserResultGet>();
+                response.Data = _userResult;
 
-                responce.Data = _userResult;
-
-                return Json(responce);
+                return Json(response);
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                ApiResponse<Object> response = new ApiResponse<Object>();
+                response.ErrorMessage = "Couldn't update user result : " + ex.Message;
+                return Json(response);
             }
         }
 
@@ -147,13 +167,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
-                ApiResponce<int> responce = new ApiResponce<int>();
-                responce.Data = await userResultService.Delete(id);
-                return Json(responce);
+                ApiResponse<int> response = new ApiResponse<int>();
+                response.Data = await userResultService.Delete(id);
+                return Json(response);
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                ApiResponse<Object> response = new ApiResponse<Object>();
+                response.ErrorMessage = "Couldn't delete user result : " + ex.Message;
+                return Json(response);
             }
         }
     }

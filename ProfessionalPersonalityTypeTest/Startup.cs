@@ -9,10 +9,7 @@ using DBRepository.Repositories;
 using Service.IServices;
 using Service.Services;
 using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using System;
+using ProfessionalPersonalityTypeTest.Helpers;
 
 namespace ProfessionalPersonalityTypeTest
 {
@@ -26,8 +23,11 @@ namespace ProfessionalPersonalityTypeTest
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
             services.AddMvc(options => options.EnableEndpointRouting = false);
-            
+            services.AddControllers();
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+
             services.AddDbContext<RepositoryContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddTransient<IUserRepository, UserRepository>();
@@ -39,26 +39,6 @@ namespace ProfessionalPersonalityTypeTest
             services.AddTransient<IUserResultService, UserResultService>();
             services.AddTransient<IQuestionService, QuestionService>();
             services.AddTransient<IProfessionService, ProfessionService>();
-
-            services.AddControllers();
-
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.RequireHttpsMetadata = false;
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])),
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = Configuration["Jwt:Issuer"],
-                    ValidAudience = Configuration["Jwt:Issuer"],
-                };
-            });
-
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -68,11 +48,16 @@ namespace ProfessionalPersonalityTypeTest
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            app.UseMiddleware<JwtMiddleware>();
             app.UseRouting();
-            app.UseAuthentication();
-            app.UseStaticFiles();
             app.UseMvc();
+
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+
+            app.UseEndpoints(x => x.MapControllers());
         }
     }
 }

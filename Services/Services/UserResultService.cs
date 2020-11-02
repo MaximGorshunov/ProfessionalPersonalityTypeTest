@@ -52,9 +52,11 @@ namespace Service.Services
                 newUserResult.C = c;
 
                 newUserResult = await userResultRepository.CreateUserResult(newUserResult);
+
+                return newUserResult;
             }
-            
-            return newUserResult;
+
+            return newUserResult = null;
         }
 
         public async Task<UserResult> Update(int id, int r, int i, int a, int s, int e, int c) 
@@ -73,9 +75,11 @@ namespace Service.Services
                 updatedUserResult.C = c;
 
                 updatedUserResult = await userResultRepository.UpdateUserResult(updatedUserResult);
+
+                return updatedUserResult;
             }
 
-            return updatedUserResult;
+            return updatedUserResult = null;
         }
     }
 }

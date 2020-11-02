@@ -2,7 +2,7 @@
 
 namespace ProfessionalPersonalityTypeTest.Models
 {
-    public class ApiResponce<T>
+    public class ApiResponse<T>
     {
         public T Data { get; set; }
 
