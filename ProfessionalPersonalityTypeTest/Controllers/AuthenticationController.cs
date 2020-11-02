@@ -28,8 +28,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             appSettings = _appSettings.Value;
         }
 
-        [AllowAnonymous]
-        public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model)
+        private async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model)
         {
             var user = await userService.GetAll();
             var checkUser = user.Where(u => u.Login == model.Login && u.Password == model.Password).FirstOrDefault();
@@ -52,9 +51,9 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim("id", user.Id.ToString()),
-                    //new Claim(ClaimTypes.Name, user.Id.ToString()),
-                    new Claim(ClaimTypes.Role, user.IsAdmin.ToString())
+                    //new Claim("id", user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.Id.ToString()),
+                    new Claim(ClaimTypes.Role, user.Role)
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -63,15 +62,16 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             return tokenHandler.WriteToken(token);
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(AuthenticateRequest model)
+        [AllowAnonymous]
+        [HttpPost("authenticate")]
+        public async Task<IActionResult> Authentication(AuthenticateRequest model)
         {
             try
             {
                 ApiResponse<AuthenticateResponse> response = new ApiResponse<AuthenticateResponse>();
                 response.Data = await Authenticate(model);
 
-                if (response.Data != null)
+                if (response.Success)
                     return Json(response);
 
                 response.ErrorMessage = "Username or password is incorrect";
@@ -79,7 +79,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch(Exception ex)
             {
-                ApiResponse<Object> response = new ApiResponse<Object>();
+                ApiResponse<AuthenticateResponse> response = new ApiResponse<AuthenticateResponse>();
                 response.ErrorMessage = "Aunthentication error : " + ex.Message;
                 return Json(response);
             }

@@ -7,6 +7,7 @@ namespace Models
      public class Question : IModel
     {
         public int Id { get; set; }
+        public int Number { get; set; }
         public int ProfessionIdFirst { get; set; }
         public int ProfessionIdSecond { get; set; }
 

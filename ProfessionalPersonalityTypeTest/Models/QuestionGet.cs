@@ -8,6 +8,7 @@ namespace ProfessionalPersonalityTypeTest.Models
     public class QuestionGet
     {
         public int Id { get; set; }
+        public int Number { get; set; }
         public ICollection<ProfessionGet> professions { get; set; }
     }
 }

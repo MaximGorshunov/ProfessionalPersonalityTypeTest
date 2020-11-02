@@ -5,7 +5,8 @@ using Service.IServices;
 using ProfessionalPersonalityTypeTest.Models;
 using System.Collections.Generic;
 using System.Linq;
-using ProfessionalPersonalityTypeTest.Helpers;
+//using ProfessionalPersonalityTypeTest.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Models;
 
 namespace ProfessionalPersonalityTypeTest.Controllers
@@ -22,10 +23,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         }
 
         [HttpGet("get")]
+        [Authorize]
         public async Task<IActionResult> GetById(int id)
         {
             try
             {
+                var currentUserId = int.Parse(User.Identity.Name);
+                if (id != currentUserId && !User.IsInRole(Roles.Admin))
+                    return Forbid();
+
                 var user = await userService.GetById(id);
                 UserGet _user = new UserGet();
 
@@ -44,14 +50,14 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch(Exception ex)
             {
-                ApiResponse<Object> response = new ApiResponse<Object>();
+                ApiResponse<UserGet> response = new ApiResponse<UserGet>();
                 response.ErrorMessage = "Couldn't get user : " + ex.Message;
                 return Json(response);
             }
         }
 
-        [Authorize]
         [HttpGet("getAll")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -72,13 +78,14 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex)
             {
-                ApiResponse<Object> response = new ApiResponse<Object>();
+                ApiResponse<UserGet> response = new ApiResponse<UserGet>();
                 response.ErrorMessage = "Couldn't get users : " + ex.Message;
                 return Json(response);
             }
         }
 
         [HttpPost("create")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Create([FromBody] UserCreate userCreate)
         {
             try
@@ -107,17 +114,22 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex)
             {
-                ApiResponse<Object> response = new ApiResponse<Object>();
+                ApiResponse<UserGet> response = new ApiResponse<UserGet>();
                 response.ErrorMessage = "Couldn't create user : " + ex.Message;
                 return Json(response);
             }
         }
 
         [HttpPost("update")]
+        [Authorize]
         public async Task<IActionResult> Update([FromBody] UserUpdate userUpdate)
         {
             try
             {
+                var currentUserId = int.Parse(User.Identity.Name);
+                if (userUpdate.Id != currentUserId && !User.IsInRole(Roles.Admin))
+                    return Forbid();
+
                 var user = await userService.Update(userUpdate.Id, userUpdate.IsAdmin, userUpdate.Login, userUpdate.Email, userUpdate.Birthdate, userUpdate.IsMan, userUpdate.Password);
                 ApiResponse<UserGet> response = new ApiResponse<UserGet>();
 
@@ -142,13 +154,14 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex)
             {
-                ApiResponse<Object> response = new ApiResponse<Object>();
+                ApiResponse<UserGet> response = new ApiResponse<UserGet>();
                 response.ErrorMessage = "Couldn't update user : " + ex.Message;
                 return Json(response);
             }
         }
 
         [HttpGet("delete")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -159,7 +172,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex)
             {
-                ApiResponse<Object> response = new ApiResponse<Object>();
+                ApiResponse<UserGet> response = new ApiResponse<UserGet>();
                 response.ErrorMessage = "Couldn't delete user : " + ex.Message;
                 return Json(response);
             }

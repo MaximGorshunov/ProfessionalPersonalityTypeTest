@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Models;
 using ProfessionalPersonalityTypeTest.Models;
 using Service.IServices;
 using System;
@@ -20,11 +22,17 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         }
 
         [HttpGet("get")]
+        [Authorize]
         public async Task<IActionResult> GetById(int id)
         {
             try
             {
                 var userResult = await userResultService.GetById(id);
+
+                var currentUserId = int.Parse(User.Identity.Name);
+                if (userResult.UserId != currentUserId && !User.IsInRole(Roles.Admin))
+                    return Forbid();
+
                 UserResultGet _userResult = new UserResultGet();
 
                 _userResult.Id = userResult.Id;
@@ -45,13 +53,14 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex)
             {
-                ApiResponse<Object> response = new ApiResponse<Object>();
+                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
                 response.ErrorMessage = "Couldn't get user result : " + ex.Message;
                 return Json(response);
             }
         }
 
         [HttpGet("getAll")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -78,22 +87,28 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex)
             {
-                ApiResponse<Object> response = new ApiResponse<Object>();
+                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
                 response.ErrorMessage = "Couldn't get users results : " + ex.Message;
                 return Json(response);
             }
         }
 
         [HttpPost("create")]
+        [Authorize]
         public async Task<IActionResult> Create([FromBody] UserResultCreate userResultCreate)
         {
             try
             {
+                var currentUserId = int.Parse(User.Identity.Name);
+                if (userResultCreate.UserId != currentUserId && !User.IsInRole(Roles.Admin))
+                    return Forbid();
+
                 var userResult = await userResultService.Create(userResultCreate.UserId, 
                                                           userResultCreate.R, userResultCreate.I, userResultCreate.A, userResultCreate.S, userResultCreate.E, userResultCreate.C);
+
                 ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
 
-                if(userResult == null)
+                if (userResult == null)
                 {
                     response.ErrorMessage = "Invalid user identity public key";
                     return Json(response);
@@ -117,17 +132,22 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex)
             {
-                ApiResponse<Object> response = new ApiResponse<Object>();
+                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
                 response.ErrorMessage = "Couldn't create user result : " + ex.Message;
                 return Json(response);
             }
         }
 
         [HttpPost("update")]
+        [Authorize]
         public async Task<IActionResult> Update([FromBody] UserResultUpdate userResultUpdate)
         {
             try
             {
+                var currentUserId = int.Parse(User.Identity.Name);
+                if (userResultUpdate.UserId != currentUserId && !User.IsInRole(Roles.Admin))
+                    return Forbid();
+
                 var userResult = await userResultService.Update(userResultUpdate.Id,
                                                         userResultUpdate.R, userResultUpdate.I, userResultUpdate.A, userResultUpdate.S, userResultUpdate.E, userResultUpdate.C);
                 ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
@@ -156,13 +176,14 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex)
             {
-                ApiResponse<Object> response = new ApiResponse<Object>();
+                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
                 response.ErrorMessage = "Couldn't update user result : " + ex.Message;
                 return Json(response);
             }
         }
 
         [HttpGet("delete")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -173,7 +194,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex)
             {
-                ApiResponse<Object> response = new ApiResponse<Object>();
+                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
                 response.ErrorMessage = "Couldn't delete user result : " + ex.Message;
                 return Json(response);
             }

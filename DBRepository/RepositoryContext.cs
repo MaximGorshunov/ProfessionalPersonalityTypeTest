@@ -29,6 +29,8 @@ namespace DBRepository
             modelBuilder.Entity<User>()
                      .HasKey(k => k.Id);
 
+            modelBuilder.Entity<User>().Ignore(b => b.Role);
+
             modelBuilder.Entity<UserResult>(eb =>
             {
                 eb.Property(b => b.UserId).IsRequired();
@@ -49,7 +51,9 @@ namespace DBRepository
                      .WithOne(e => e.UserResult)
                      .HasForeignKey<UserResult>(k => k.UserId)
                      .OnDelete(DeleteBehavior.Cascade);
-            
+
+            modelBuilder.Entity<Question>(eb => { eb.Property(b => b.Number).IsRequired(); });
+
             modelBuilder.Entity<Question>()
                      .HasKey(k => k.Id);
 

@@ -10,6 +10,9 @@ using Service.IServices;
 using Service.Services;
 using Microsoft.Extensions.Configuration;
 using ProfessionalPersonalityTypeTest.Helpers;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ProfessionalPersonalityTypeTest
 {
@@ -26,7 +29,29 @@ namespace ProfessionalPersonalityTypeTest
             services.AddCors();
             services.AddMvc(options => options.EnableEndpointRouting = false);
             services.AddControllers();
-            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+
+            var appSettingsSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
+
+            var appSettings = appSettingsSection.Get<AppSettings>();
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
 
             services.AddDbContext<RepositoryContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -48,15 +73,19 @@ namespace ProfessionalPersonalityTypeTest
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMiddleware<JwtMiddleware>();
+            //app.UseMiddleware<JwtMiddleware>();
+            
             app.UseRouting();
-            app.UseMvc();
-
+            
             app.UseCors(x => x
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseMvc();
             app.UseEndpoints(x => x.MapControllers());
         }
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ProfessionalPersonalityTypeTest.Models;
 using Service.IServices;
 using System;
@@ -23,6 +24,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         }
 
         [HttpGet("get")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -46,6 +48,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 QuestionGet questionGet = new QuestionGet();
 
                 questionGet.Id = question.Id;
+                questionGet.Number = question.Number;
 
                 questionGet.professions = new Collection<ProfessionGet>();
 
@@ -58,13 +61,14 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex)
             {
-                ApiResponse<Object> response = new ApiResponse<Object>();
+                ApiResponse<QuestionGet> response = new ApiResponse<QuestionGet>();
                 response.ErrorMessage = "Couldn't get question : " + ex.Message;
                 return Json(response);
             }
         }
 
         [Route("getAll")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -92,6 +96,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                     QuestionGet questionGet = new QuestionGet();
 
                     questionGet.Id = q.Id;
+                    questionGet.Number = q.Number;
 
                     questionGet.professions = new Collection<ProfessionGet>();
 
@@ -107,7 +112,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex) 
             {
-                ApiResponse<Object> response = new ApiResponse<Object>();
+                ApiResponse<QuestionGet> response = new ApiResponse<QuestionGet>();
                 response.ErrorMessage = "Couldn't get questions : " + ex.Message;
                 return Json(response);
             }
