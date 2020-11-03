@@ -51,7 +51,6 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    //new Claim("id", user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Id.ToString()),
                     new Claim(ClaimTypes.Role, user.Role)
                 }),
@@ -62,12 +61,22 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             return tokenHandler.WriteToken(token);
         }
 
+        /// <summary>
+        /// Authentication method
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>
+        /// User + Token
+        /// </returns>
         [AllowAnonymous]
-        [HttpPost("authenticate")]
+        [HttpPost("authentication")]
         public async Task<IActionResult> Authentication(AuthenticateRequest model)
         {
             try
             {
+                if (!ModelState.IsValid)
+                    return BadRequest();
+
                 ApiResponse<AuthenticateResponse> response = new ApiResponse<AuthenticateResponse>();
                 response.Data = await Authenticate(model);
 
@@ -81,6 +90,51 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             {
                 ApiResponse<AuthenticateResponse> response = new ApiResponse<AuthenticateResponse>();
                 response.ErrorMessage = "Aunthentication error : " + ex.Message;
+                return Json(response);
+            }
+        }
+
+        /// <summary>
+        /// Registration method.
+        /// Registrate only in role user.
+        /// After successful registration authenticate user.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>User + Token</returns>
+        [AllowAnonymous]
+        [HttpPost("registration")]
+        public async Task<IActionResult> Registration(RegistrationRequest model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest();
+
+                var user = await userService.Create(false, model.Login, model.Email, model.Birthdate, model.IsMan, model.Password);
+                ApiResponse<AuthenticateResponse> response = new ApiResponse<AuthenticateResponse>();
+
+                if (user == null)
+                {
+                    response.ErrorMessage = "User with such login or email already exists";
+                    return Json(response);
+                }
+
+                AuthenticateRequest authenticateRequest = new AuthenticateRequest();
+                authenticateRequest.Login = model.Login;
+                authenticateRequest.Password = model.Password;
+
+                response.Data = await Authenticate(authenticateRequest);
+
+                if (response.Success)
+                    return Json(response);
+
+                response.ErrorMessage = "Username or password is incorrect";
+                return BadRequest(response);
+            }
+            catch(Exception ex)
+            {
+                ApiResponse<RegistrationRequest> response = new ApiResponse<RegistrationRequest>();
+                response.ErrorMessage = "Registration error : " + ex.Message;
                 return Json(response);
             }
         }

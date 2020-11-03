@@ -1,19 +1,17 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProfessionalPersonalityTypeTest.Models
 {
     /// <summary>
-    /// Request model for creating user
+    /// Request model for registration
     /// </summary>
-    public class UserCreate
+    public class RegistrationRequest
     {
-        /// <summary>
-        /// Defines is user an admin or not
-        /// </summary>
-        [Required]
-        public bool IsAdmin { get; set; }
-        
         /// <summary>
         /// User's login name
         /// </summary>
@@ -28,13 +26,13 @@ namespace ProfessionalPersonalityTypeTest.Models
         [RegularExpression(@"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}")]
         [StringLength(60, MinimumLength = 6)]
         public string Email { get; set; }
-        
+
         /// <summary>
         /// User's birthdate
         /// </summary>
         [Required]
         public DateTime Birthdate { get; set; }
-        
+
         /// <summary>
         /// Defines is user a male or female
         /// </summary>

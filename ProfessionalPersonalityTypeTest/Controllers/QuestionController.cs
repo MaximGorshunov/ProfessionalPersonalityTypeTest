@@ -23,6 +23,12 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             professionService = _professionService;
         }
 
+        /// <summary>
+        /// Find question by identity key.
+        /// All allowed.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("get")]
         [AllowAnonymous]
         public async Task<IActionResult> GetById(int id)
@@ -67,7 +73,12 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
         }
 
-        [Route("getAll")]
+        /// <summary>
+        /// Get all questions.
+        /// All allowed.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("getAll")]
         [AllowAnonymous]
         public async Task<IActionResult> GetAll()
         {

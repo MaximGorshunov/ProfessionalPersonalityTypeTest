@@ -20,7 +20,7 @@ namespace DBRepository
             {
                 eb.Property(b => b.Login).HasMaxLength(20).IsRequired();
                 eb.Property(b => b.IsAdmin).IsRequired();
-                eb.Property(b => b.Email).HasMaxLength(30).IsRequired();
+                eb.Property(b => b.Email).HasMaxLength(60).IsRequired();
                 eb.Property(b => b.Birthdate).IsRequired();
                 eb.Property(b => b.IsMan).IsRequired();
                 eb.Property(b => b.Password).HasMaxLength(30).IsRequired();

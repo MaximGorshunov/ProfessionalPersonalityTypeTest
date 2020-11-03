@@ -1,0 +1,337 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ProfessionalPersonalityTypeTest</name>
+    </assembly>
+    <members>
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.AuthenticationController.Authentication(ProfessionalPersonalityTypeTest.Models.AuthenticateRequest)">
+            <summary>
+            Authentication method
+            </summary>
+            <param name="model"></param>
+            <returns>
+            User + Token
+            </returns>
+        </member>
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.AuthenticationController.Registration(ProfessionalPersonalityTypeTest.Models.RegistrationRequest)">
+            <summary>
+            Registration method.
+            Registrate only in role user.
+            After successful registration authenticate user.
+            </summary>
+            <param name="model"></param>
+            <returns>User + Token</returns>
+        </member>
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.QuestionController.GetById(System.Int32)">
+            <summary>
+            Find question by identity key.
+            All allowed.
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.QuestionController.GetAll">
+            <summary>
+            Get all questions.
+            All allowed.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserController.GetById(System.Int32)">
+            <summary>
+            Find user by his identity key.
+            Admin can find any user.
+            User can find only himself.
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserController.GetAll">
+            <summary>
+            Get all users from DB.
+            Only Admin is allowed.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserController.Create(ProfessionalPersonalityTypeTest.Models.UserCreate)">
+            <summary> 
+            Adds new user in DB.
+            Only Admin is allowed.
+            </summary>
+            <param name="userCreate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserController.Update(ProfessionalPersonalityTypeTest.Models.UserUpdate)">
+            <summary>
+            Updade user.
+            Admin can update any user.
+            User can update only himself.
+            </summary>
+            <param name="userUpdate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserController.Delete(System.Int32)">
+            <summary>
+            Delete user from DB.
+            Only Admin is allowed.
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.GetById(System.Int32)">
+            <summary>
+            Find user's test's result by identity key.
+            Admin can find any result.
+            User can find only his result.
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.GetAll">
+            <summary>
+            Get all user's test's results.
+            Only admin is allowed.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.Create(ProfessionalPersonalityTypeTest.Models.UserResultCreate)">
+            <summary>
+            Add new user's test result.
+            Admin can add test's result for any user.
+            User can add test's result only for himself.
+            </summary>
+            <param name="userResultCreate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.Update(ProfessionalPersonalityTypeTest.Models.UserResultUpdate)">
+            <summary>
+            Update user's test result.
+            Admin can update any test's result.
+            User can update only his test's result.
+            </summary>
+            <param name="userResultUpdate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.Delete(System.Int32)">
+            <summary>
+            Delete user's test's result.
+            Admin can delete any test's result.
+            User can delete only his test's result.
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.AuthenticateRequest.Login">
+            <summary>
+            User's login name
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.AuthenticateRequest.Password">
+            <summary>
+            User's password
+            </summary>
+        </member>
+        <member name="T:ProfessionalPersonalityTypeTest.Models.RegistrationRequest">
+            <summary>
+            Request model for registration
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.RegistrationRequest.Login">
+            <summary>
+            User's login name
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.RegistrationRequest.Email">
+            <summary>
+            User's email
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.RegistrationRequest.Birthdate">
+            <summary>
+            User's birthdate
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.RegistrationRequest.IsMan">
+            <summary>
+            Defines is user a male or female
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.RegistrationRequest.Password">
+            <summary>
+            User's password
+            </summary>
+        </member>
+        <member name="T:ProfessionalPersonalityTypeTest.Models.UserCreate">
+            <summary>
+            Request model for creating user
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserCreate.IsAdmin">
+            <summary>
+            Defines is user an admin or not
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserCreate.Login">
+            <summary>
+            User's login name
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserCreate.Email">
+            <summary>
+            User's email
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserCreate.Birthdate">
+            <summary>
+            User's birthdate
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserCreate.IsMan">
+            <summary>
+            Defines is user a male or female
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserCreate.Password">
+            <summary>
+            User's password
+            </summary>
+        </member>
+        <member name="T:ProfessionalPersonalityTypeTest.Models.UserResultCreate">
+            <summary>
+            Request model for creating user's test result
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultCreate.UserId">
+            <summary>
+            User's id 
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultCreate.R">
+            <summary>
+            Realistic type
+            Сontains the sum of the selected professions of the given type
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultCreate.I">
+            <summary>
+            Investigative type
+            Сontains the sum of the selected professions of the given type
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultCreate.A">
+            <summary>
+            Artistic type
+            Сontains the sum of the selected professions of the given type
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultCreate.S">
+            <summary>
+            Social type
+            Сontains the sum of the selected professions of the given type
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultCreate.E">
+            <summary>
+            Enterprising type
+            Сontains the sum of the selected professions of the given type
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultCreate.C">
+            <summary>
+            Conventional type
+            Сontains the sum of the selected professions of the given type
+            </summary>
+        </member>
+        <member name="T:ProfessionalPersonalityTypeTest.Models.UserResultUpdate">
+            <summary>
+            Request model for updating user's test result
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultUpdate.Id">
+            <summary>
+            Identity key
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultUpdate.UserId">
+            <summary>
+            User's identity key
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultUpdate.R">
+            <summary>
+            Realistic type
+            Сontains the sum of the selected professions of the given type
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultUpdate.I">
+            <summary>
+            Investigative type
+            Сontains the sum of the selected professions of the given type
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultUpdate.A">
+            <summary>
+            Artistic type
+            Сontains the sum of the selected professions of the given type
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultUpdate.S">
+            <summary>
+            Social type
+            Сontains the sum of the selected professions of the given type
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultUpdate.E">
+            <summary>
+            Enterprising type
+            Сontains the sum of the selected professions of the given type
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultUpdate.C">
+            <summary>
+            Conventional type
+            Сontains the sum of the selected professions of the given type
+            </summary>
+        </member>
+        <member name="T:ProfessionalPersonalityTypeTest.Models.UserUpdate">
+            <summary>
+            Request model for updating user
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserUpdate.Id">
+            <summary>
+            User's identity key
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserUpdate.IsAdmin">
+            <summary>
+            Defines is user an admin or not
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserUpdate.Login">
+            <summary>
+            User's login name
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserUpdate.Email">
+            <summary>
+            User's email
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserUpdate.Birthdate">
+            <summary>
+            User's birthdate
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserUpdate.IsMan">
+            <summary>
+            Defines is user a male or female
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserUpdate.Password">
+            <summary>
+            User's password
+            </summary>
+        </member>
+    </members>
+</doc>

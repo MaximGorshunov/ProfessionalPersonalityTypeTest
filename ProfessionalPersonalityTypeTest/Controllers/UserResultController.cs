@@ -21,6 +21,13 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             userResultService = _userResultService;
         }
 
+        /// <summary>
+        /// Find user's test's result by identity key.
+        /// Admin can find any result.
+        /// User can find only his result.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("get")]
         [Authorize]
         public async Task<IActionResult> GetById(int id)
@@ -59,6 +66,11 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
         }
 
+        /// <summary>
+        /// Get all user's test's results.
+        /// Only admin is allowed.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("getAll")]
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> GetAll()
@@ -93,12 +105,22 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
         }
 
+        /// <summary>
+        /// Add new user's test result.
+        /// Admin can add test's result for any user.
+        /// User can add test's result only for himself.
+        /// </summary>
+        /// <param name="userResultCreate"></param>
+        /// <returns></returns>
         [HttpPost("create")]
         [Authorize]
         public async Task<IActionResult> Create([FromBody] UserResultCreate userResultCreate)
         {
             try
             {
+                if (!ModelState.IsValid)
+                    return BadRequest();
+
                 var currentUserId = int.Parse(User.Identity.Name);
                 if (userResultCreate.UserId != currentUserId && !User.IsInRole(Roles.Admin))
                     return Forbid();
@@ -138,12 +160,22 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
         }
 
+        /// <summary>
+        /// Update user's test result.
+        /// Admin can update any test's result.
+        /// User can update only his test's result.
+        /// </summary>
+        /// <param name="userResultUpdate"></param>
+        /// <returns></returns>
         [HttpPost("update")]
         [Authorize]
         public async Task<IActionResult> Update([FromBody] UserResultUpdate userResultUpdate)
         {
             try
             {
+                if (!ModelState.IsValid)
+                    return BadRequest();
+
                 var currentUserId = int.Parse(User.Identity.Name);
                 if (userResultUpdate.UserId != currentUserId && !User.IsInRole(Roles.Admin))
                     return Forbid();
@@ -182,12 +214,24 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete user's test's result.
+        /// Admin can delete any test's result.
+        /// User can delete only his test's result.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("delete")]
-        [Authorize(Roles = Roles.Admin)]
+        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
+                var userResult = await userResultService.GetById(id);
+                var currentUserId = int.Parse(User.Identity.Name);
+                if (userResult.UserId != currentUserId && !User.IsInRole(Roles.Admin))
+                    return Forbid();
+
                 ApiResponse<int> response = new ApiResponse<int>();
                 response.Data = await userResultService.Delete(id);
                 return Json(response);

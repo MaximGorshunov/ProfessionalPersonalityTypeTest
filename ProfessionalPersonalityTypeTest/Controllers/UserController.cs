@@ -5,7 +5,6 @@ using Service.IServices;
 using ProfessionalPersonalityTypeTest.Models;
 using System.Collections.Generic;
 using System.Linq;
-//using ProfessionalPersonalityTypeTest.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Models;
 
@@ -22,6 +21,13 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             userService = _userService;
         }
 
+        /// <summary>
+        /// Find user by his identity key.
+        /// Admin can find any user.
+        /// User can find only himself.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("get")]
         [Authorize]
         public async Task<IActionResult> GetById(int id)
@@ -56,6 +62,11 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
         }
 
+        /// <summary>
+        /// Get all users from DB.
+        /// Only Admin is allowed.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("getAll")]
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> GetAll()
@@ -84,12 +95,21 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
         }
 
+        /// <summary> 
+        /// Adds new user in DB.
+        /// Only Admin is allowed.
+        /// </summary>
+        /// <param name="userCreate"></param>
+        /// <returns></returns>
         [HttpPost("create")]
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Create([FromBody] UserCreate userCreate)
         {
             try
             {
+                if (!ModelState.IsValid)
+                    return BadRequest();
+
                 var user = await userService.Create(userCreate.IsAdmin, userCreate.Login, userCreate.Email, userCreate.Birthdate, userCreate.IsMan, userCreate.Password);
                 ApiResponse<UserGet> response = new ApiResponse<UserGet>();
 
@@ -120,12 +140,22 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
         }
 
+        /// <summary>
+        /// Updade user.
+        /// Admin can update any user.
+        /// User can update only himself.
+        /// </summary>
+        /// <param name="userUpdate"></param>
+        /// <returns></returns>
         [HttpPost("update")]
         [Authorize]
         public async Task<IActionResult> Update([FromBody] UserUpdate userUpdate)
         {
             try
             {
+                if (!ModelState.IsValid)
+                    return BadRequest();
+
                 var currentUserId = int.Parse(User.Identity.Name);
                 if (userUpdate.Id != currentUserId && !User.IsInRole(Roles.Admin))
                     return Forbid();
@@ -160,6 +190,12 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete user from DB.
+        /// Only Admin is allowed.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("delete")]
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Delete(int id)

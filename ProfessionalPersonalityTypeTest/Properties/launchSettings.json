@@ -17,6 +17,8 @@
     },
     "ProfessionalPersonalityTypeTest": {
       "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger/ui",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
