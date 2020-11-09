@@ -210,7 +210,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                    return BadRequest();
+                        return BadRequest();
 
                 var currentUserId = int.Parse(User.Identity.Name);
                 if (userResultUpdate.UserId != currentUserId && !User.IsInRole(Roles.Admin))

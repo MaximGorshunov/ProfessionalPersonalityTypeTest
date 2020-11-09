@@ -77,7 +77,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 ApiResponse<AuthenticateResponse> response = new ApiResponse<AuthenticateResponse>();
 
                 if (!ModelState.IsValid)
-                    return BadRequest();
+                        return BadRequest();
 
                 response.Data = await Authenticate(model);
 
@@ -111,7 +111,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 ApiResponse<AuthenticateResponse> response = new ApiResponse<AuthenticateResponse>();
 
                 if (!ModelState.IsValid)
-                    return BadRequest();
+                        return BadRequest();
 
                 var user = await userService.Create(false, model.Login, model.Email, model.Birthdate, model.IsMan, model.Password);
 

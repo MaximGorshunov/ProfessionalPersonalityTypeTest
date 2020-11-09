@@ -110,7 +110,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 ApiResponse<UserGet> response = new ApiResponse<UserGet>();
 
                 if (!ModelState.IsValid)
-                    return BadRequest();
+                        return BadRequest();
 
                 var user = await userService.Create(userCreate.IsAdmin, userCreate.Login, userCreate.Email, userCreate.Birthdate, userCreate.IsMan, userCreate.Password);
 
@@ -157,7 +157,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 ApiResponse<UserGet> response = new ApiResponse<UserGet>();
                 
                 if (!ModelState.IsValid)
-                    return BadRequest();
+                        return BadRequest();
 
                 var currentUserId = int.Parse(User.Identity.Name);
                 if (userUpdate.Id != currentUserId && !User.IsInRole(Roles.Admin))
