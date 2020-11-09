@@ -26,9 +26,9 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         }
 
         /// <summary>
-        /// Find user's test's result by identity key.
+        /// Find test's result by identity key.
         /// Admin can find any result.
-        /// User can find only his result.
+        /// User can find only his own result.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -65,13 +65,13 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch (Exception ex)
             {
                 ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
-                response.ErrorMessage = "Couldn't get user result : " + ex.Message;
+                response.ErrorMessage = $"Couldn't get user result {ex.Message}";
                 return Json(response);
             }
         }
 
         /// <summary>
-        /// Get all user's test's results.
+        /// Get all test's results.
         /// Only admin is allowed.
         /// </summary>
         /// <returns></returns>
@@ -104,15 +104,13 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch (Exception ex)
             {
                 ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
-                response.ErrorMessage = "Couldn't get users results : " + ex.Message;
+                response.ErrorMessage = "Couldn't get users results";
                 return Json(response);
             }
         }
 
         /// <summary>
-        /// Add new user's test result.
-        /// Admin can add test's result for any user.
-        /// User can add test's result only for himself.
+        /// Create new test result after completing.
         /// </summary>
         /// <param name="answers">
         /// List of profession's id
@@ -131,6 +129,12 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 if(answers.Count() != questions.Count())
                 {
                     response.ErrorMessage = "Not all questions are answered";
+                    return Json(response);
+                }
+
+                if(answers.Distinct().Count() != answers.Count())
+                {
+                    response.ErrorMessage = "Some answers repeated";
                     return Json(response);
                 }
 
@@ -187,15 +191,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch (Exception ex)
             {
                 ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
-                response.ErrorMessage = "Couldn't create result : " + ex.Message;
+                response.ErrorMessage = "Couldn't create result";
                 return Json(response);
             }
         }
 
         /// <summary>
-        /// Update user's test result.
+        /// Update test's result.
         /// Admin can update any test's result.
-        /// User can update only his test's result.
+        /// User can update only his own test's result.
         /// </summary>
         /// <param name="userResultUpdate"></param>
         /// <returns></returns>
@@ -241,15 +245,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch (Exception ex)
             {
                 ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
-                response.ErrorMessage = "Couldn't update user result : " + ex.Message;
+                response.ErrorMessage = "Couldn't update user result";
                 return Json(response);
             }
         }
 
         /// <summary>
-        /// Delete user's test's result.
+        /// Delete test's result.
         /// Admin can delete any test's result.
-        /// User can delete only his test's result.
+        /// User can delete only his own test's result.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -271,7 +275,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch (Exception ex)
             {
                 ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
-                response.ErrorMessage = "Couldn't delete user result : " + ex.Message;
+                response.ErrorMessage = "Couldn't delete user result";
                 return Json(response);
             }
         }

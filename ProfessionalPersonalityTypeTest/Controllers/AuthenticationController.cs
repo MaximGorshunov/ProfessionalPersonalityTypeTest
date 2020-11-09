@@ -62,22 +62,23 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         }
 
         /// <summary>
-        /// Authentication method
+        /// Autorisation method
         /// </summary>
         /// <param name="model"></param>
         /// <returns>
         /// User + Token
         /// </returns>
         [AllowAnonymous]
-        [HttpPost("authentication")]
-        public async Task<IActionResult> Authentication(AuthenticateRequest model)
+        [HttpPost("autorisation")]
+        public async Task<IActionResult> Autorisation(AuthenticateRequest model)
         {
             try
             {
+                ApiResponse<AuthenticateResponse> response = new ApiResponse<AuthenticateResponse>();
+
                 if (!ModelState.IsValid)
                     return BadRequest();
 
-                ApiResponse<AuthenticateResponse> response = new ApiResponse<AuthenticateResponse>();
                 response.Data = await Authenticate(model);
 
                 if (response.Success)
@@ -89,14 +90,14 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch(Exception ex)
             {
                 ApiResponse<AuthenticateResponse> response = new ApiResponse<AuthenticateResponse>();
-                response.ErrorMessage = "Aunthentication error : " + ex.Message;
+                response.ErrorMessage = "Autorisation error";
                 return Json(response);
             }
         }
 
         /// <summary>
         /// Registration method.
-        /// Registrate only in role user.
+        /// Registrate only in role "user".
         /// After successful registration authenticate user.
         /// </summary>
         /// <param name="model"></param>
@@ -107,11 +108,12 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
+                ApiResponse<AuthenticateResponse> response = new ApiResponse<AuthenticateResponse>();
+
                 if (!ModelState.IsValid)
                     return BadRequest();
 
                 var user = await userService.Create(false, model.Login, model.Email, model.Birthdate, model.IsMan, model.Password);
-                ApiResponse<AuthenticateResponse> response = new ApiResponse<AuthenticateResponse>();
 
                 if (user == null)
                 {
@@ -120,6 +122,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 }
 
                 AuthenticateRequest authenticateRequest = new AuthenticateRequest();
+
                 authenticateRequest.Login = model.Login;
                 authenticateRequest.Password = model.Password;
 
@@ -134,7 +137,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch(Exception ex)
             {
                 ApiResponse<RegistrationRequest> response = new ApiResponse<RegistrationRequest>();
-                response.ErrorMessage = "Registration error : " + ex.Message;
+                response.ErrorMessage = "Registration error";
                 return Json(response);
             }
         }

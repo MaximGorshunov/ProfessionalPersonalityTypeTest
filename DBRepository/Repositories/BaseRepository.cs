@@ -26,7 +26,7 @@ namespace DBRepository.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"Couldn't retrieve entities: {ex.Message}");
+                throw new Exception(ex.Message);
             }
         }
 
@@ -38,7 +38,7 @@ namespace DBRepository.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"Couldn't retrive entitie: {ex.Message}");
+                throw new Exception(ex.Message);
             }
         }
     }

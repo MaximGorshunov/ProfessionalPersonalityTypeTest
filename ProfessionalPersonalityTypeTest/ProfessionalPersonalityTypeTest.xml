@@ -4,9 +4,9 @@
         <name>ProfessionalPersonalityTypeTest</name>
     </assembly>
     <members>
-        <member name="M:ProfessionalPersonalityTypeTest.Controllers.AuthenticationController.Authentication(ProfessionalPersonalityTypeTest.Models.AuthenticateRequest)">
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.AuthenticationController.Autorisation(ProfessionalPersonalityTypeTest.Models.AuthenticateRequest)">
             <summary>
-            Authentication method
+            Autorisation method
             </summary>
             <param name="model"></param>
             <returns>
@@ -16,7 +16,7 @@
         <member name="M:ProfessionalPersonalityTypeTest.Controllers.AuthenticationController.Registration(ProfessionalPersonalityTypeTest.Models.RegistrationRequest)">
             <summary>
             Registration method.
-            Registrate only in role user.
+            Registrate only in role "user".
             After successful registration authenticate user.
             </summary>
             <param name="model"></param>
@@ -55,7 +55,7 @@
         </member>
         <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserController.Create(ProfessionalPersonalityTypeTest.Models.UserCreate)">
             <summary> 
-            Adds new user in DB.
+            Add new user in DB.
             Only Admin is allowed.
             </summary>
             <param name="userCreate"></param>
@@ -80,25 +80,23 @@
         </member>
         <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.GetById(System.Int32)">
             <summary>
-            Find user's test's result by identity key.
+            Find test's result by identity key.
             Admin can find any result.
-            User can find only his result.
+            User can find only his own result.
             </summary>
             <param name="id"></param>
             <returns></returns>
         </member>
         <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.GetAll">
             <summary>
-            Get all user's test's results.
+            Get all test's results.
             Only admin is allowed.
             </summary>
             <returns></returns>
         </member>
         <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.Create(System.Collections.Generic.List{System.Int32})">
             <summary>
-            Add new user's test result.
-            Admin can add test's result for any user.
-            User can add test's result only for himself.
+            Create new test result after completing.
             </summary>
             <param name="answers">
             List of profession's id
@@ -107,18 +105,18 @@
         </member>
         <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.Update(ProfessionalPersonalityTypeTest.Models.UserResultUpdate)">
             <summary>
-            Update user's test result.
+            Update test's result.
             Admin can update any test's result.
-            User can update only his test's result.
+            User can update only his own test's result.
             </summary>
             <param name="userResultUpdate"></param>
             <returns></returns>
         </member>
         <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.Delete(System.Int32)">
             <summary>
-            Delete user's test's result.
+            Delete test's result.
             Admin can delete any test's result.
-            User can delete only his test's result.
+            User can delete only his own test's result.
             </summary>
             <param name="id"></param>
             <returns></returns>
