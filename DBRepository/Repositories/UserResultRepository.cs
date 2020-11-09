@@ -20,7 +20,7 @@ namespace DBRepository.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"Couldn't create user result: {ex.Message}");
+                throw new Exception(ex.Message);
             }
         }
 
@@ -33,7 +33,7 @@ namespace DBRepository.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"Couldn't find user result: {ex.Message}");
+                throw new Exception(ex.Message);
             }
         }
 
@@ -51,7 +51,7 @@ namespace DBRepository.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"Couldn't delete user result: {ex.Message}");
+                throw new Exception(ex.Message);
             }
         }
 
@@ -65,7 +65,7 @@ namespace DBRepository.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception($"Couldn't update user result: {ex.Message}");
+                throw new Exception(ex.Message);
             }
         }
     }

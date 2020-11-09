@@ -57,7 +57,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch(Exception ex)
             {
                 ApiResponse<UserGet> response = new ApiResponse<UserGet>();
-                response.ErrorMessage = "Couldn't get user : " + ex.Message;
+                response.ErrorMessage = $"Couldn't get user : {ex.Message}";
                 return Json(response);
             }
         }
@@ -90,13 +90,13 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch (Exception ex)
             {
                 ApiResponse<UserGet> response = new ApiResponse<UserGet>();
-                response.ErrorMessage = "Couldn't get users : " + ex.Message;
+                response.ErrorMessage = "Couldn't get users";
                 return Json(response);
             }
         }
 
         /// <summary> 
-        /// Adds new user in DB.
+        /// Add new user in DB.
         /// Only Admin is allowed.
         /// </summary>
         /// <param name="userCreate"></param>
@@ -107,11 +107,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
+                ApiResponse<UserGet> response = new ApiResponse<UserGet>();
+
                 if (!ModelState.IsValid)
-                    return BadRequest();
+                {
+                    response.ErrorMessage = "Model State not valid";
+                    return BadRequest(response);
+                }
 
                 var user = await userService.Create(userCreate.IsAdmin, userCreate.Login, userCreate.Email, userCreate.Birthdate, userCreate.IsMan, userCreate.Password);
-                ApiResponse<UserGet> response = new ApiResponse<UserGet>();
 
                 if (user == null)
                 {
@@ -135,7 +139,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch (Exception ex)
             {
                 ApiResponse<UserGet> response = new ApiResponse<UserGet>();
-                response.ErrorMessage = "Couldn't create user : " + ex.Message;
+                response.ErrorMessage = "Couldn't create user";
                 return Json(response);
             }
         }
@@ -153,15 +157,19 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
+                ApiResponse<UserGet> response = new ApiResponse<UserGet>();
+                
                 if (!ModelState.IsValid)
-                    return BadRequest();
+                {
+                    response.ErrorMessage = "Model State not valid";
+                    return BadRequest(response);
+                }
 
                 var currentUserId = int.Parse(User.Identity.Name);
                 if (userUpdate.Id != currentUserId && !User.IsInRole(Roles.Admin))
                     return Forbid();
 
                 var user = await userService.Update(userUpdate.Id, userUpdate.IsAdmin, userUpdate.Login, userUpdate.Email, userUpdate.Birthdate, userUpdate.IsMan, userUpdate.Password);
-                ApiResponse<UserGet> response = new ApiResponse<UserGet>();
 
                 if (user == null)
                 {
@@ -185,7 +193,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch (Exception ex)
             {
                 ApiResponse<UserGet> response = new ApiResponse<UserGet>();
-                response.ErrorMessage = "Couldn't update user : " + ex.Message;
+                response.ErrorMessage = "Couldn't update user";
                 return Json(response);
             }
         }
@@ -209,7 +217,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch (Exception ex)
             {
                 ApiResponse<UserGet> response = new ApiResponse<UserGet>();
-                response.ErrorMessage = "Couldn't delete user : " + ex.Message;
+                response.ErrorMessage = "Couldn't delete user";
                 return Json(response);
             }
         }
