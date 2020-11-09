@@ -43,11 +43,13 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 ProfessionGet professionGetFirst = new ProfessionGet();
 
+                professionGetFirst.Id = professionFirst.Id;
                 professionGetFirst.Name = professionFirst.Name;
                 professionGetFirst.Type = professionFirst.ProfType.ToString();
 
                 ProfessionGet professionGetSecond = new ProfessionGet();
 
+                professionGetSecond.Id = professionSecond.Id;
                 professionGetSecond.Name = professionSecond.Name;
                 professionGetSecond.Type = professionSecond.ProfType.ToString();
 
@@ -96,11 +98,13 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                     ProfessionGet professionGetFirst = new ProfessionGet();
 
+                    professionGetFirst.Id = professionFirst.Id;
                     professionGetFirst.Name = professionFirst.Name;
                     professionGetFirst.Type = professionFirst.ProfType.ToString();
 
                     ProfessionGet professionGetSecond = new ProfessionGet();
 
+                    professionGetSecond.Id = professionSecond.Id;
                     professionGetSecond.Name = professionSecond.Name;
                     professionGetSecond.Type = professionSecond.ProfType.ToString();
 

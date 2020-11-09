@@ -10,7 +10,7 @@ namespace Service.IServices
         Task<List<UserResult>> GetAll();
         Task<UserResult> GetById(int id);
         Task<int> Delete(int id);
-        Task<UserResult> Create(int userId, int r, int i, int a, int s, int e, int c);
+        Task<UserResult> Create(int? userId, List<Profession> professions);
         Task<UserResult> Update(int id, int r, int i, int a, int s, int e, int c);
     }
 }

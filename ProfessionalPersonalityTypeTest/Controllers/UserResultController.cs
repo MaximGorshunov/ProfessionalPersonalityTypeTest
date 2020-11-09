@@ -15,10 +15,14 @@ namespace ProfessionalPersonalityTypeTest.Controllers
     public class UserResultController : Controller
     {
         private readonly IUserResultService userResultService;
+        private readonly IQuestionService questionService;
+        private readonly IProfessionService professionService;
 
-        public UserResultController(IUserResultService _userResultService)
+        public UserResultController(IUserResultService _userResultService, IQuestionService _questionService, IProfessionService _professionService)
         {
             userResultService = _userResultService;
+            questionService = _questionService;
+            professionService = _professionService;
         }
 
         /// <summary>
@@ -110,36 +114,64 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         /// Admin can add test's result for any user.
         /// User can add test's result only for himself.
         /// </summary>
-        /// <param name="userResultCreate"></param>
+        /// <param name="answers">
+        /// List of profession's id
+        /// </param>
         /// <returns></returns>
         [HttpPost("create")]
-        [Authorize]
-        public async Task<IActionResult> Create([FromBody] UserResultCreate userResultCreate)
+        [AllowAnonymous]
+        public async Task<IActionResult> Create([FromBody] List<int> answers)
         {
             try
             {
-                if (!ModelState.IsValid)
-                    return BadRequest();
-
-                var currentUserId = int.Parse(User.Identity.Name);
-                if (userResultCreate.UserId != currentUserId && !User.IsInRole(Roles.Admin))
-                    return Forbid();
-
-                var userResult = await userResultService.Create(userResultCreate.UserId, 
-                                                          userResultCreate.R, userResultCreate.I, userResultCreate.A, userResultCreate.S, userResultCreate.E, userResultCreate.C);
-
                 ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
+
+                var questions = await questionService.GetAll();
+
+                if(answers.Count() != questions.Count())
+                {
+                    response.ErrorMessage = "Not all questions are answered";
+                    return Json(response);
+                }
+
+                List<Profession> professions = new List<Profession>();
+
+                foreach(var a in answers)
+                {
+                    var p = await professionService.GetById(a);
+
+                    if (p == null)
+                    {
+                        response.ErrorMessage = "Answer with id " + a.ToString() + " not found";
+                        return Json(response);
+                    }
+
+                    professions.Add(p);
+                }
+
+                int? UserId = null;
+                bool isAuthenticated = User.Identity.IsAuthenticated;
+
+                if (isAuthenticated)
+                {
+                    UserId = int.Parse(User.Identity.Name);
+                }
+
+                var userResult = await userResultService.Create(UserId, professions);
 
                 if (userResult == null)
                 {
-                    response.ErrorMessage = "Invalid user identity public key";
+                    response.ErrorMessage = "Causes problems with updating of existing result";
                     return Json(response);
                 }
 
                 UserResultGet _userResult = new UserResultGet();
 
-                _userResult.Id = userResult.Id;
-                _userResult.UserId = userResult.UserId;
+                if (isAuthenticated)
+                {
+                    _userResult.Id = userResult.Id;
+                    _userResult.UserId = userResult.UserId;
+                }
                 _userResult.Date = userResult.Date;
                 _userResult.R = userResult.R;
                 _userResult.I = userResult.I;
@@ -155,7 +187,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch (Exception ex)
             {
                 ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
-                response.ErrorMessage = "Couldn't create user result : " + ex.Message;
+                response.ErrorMessage = "Couldn't create result : " + ex.Message;
                 return Json(response);
             }
         }

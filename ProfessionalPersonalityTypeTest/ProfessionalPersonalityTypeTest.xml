@@ -94,13 +94,15 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.Create(ProfessionalPersonalityTypeTest.Models.UserResultCreate)">
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.Create(System.Collections.Generic.List{System.Int32})">
             <summary>
             Add new user's test result.
             Admin can add test's result for any user.
             User can add test's result only for himself.
             </summary>
-            <param name="userResultCreate"></param>
+            <param name="answers">
+            List of profession's id
+            </param>
             <returns></returns>
         </member>
         <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.Update(ProfessionalPersonalityTypeTest.Models.UserResultUpdate)">
@@ -120,6 +122,11 @@
             </summary>
             <param name="id"></param>
             <returns></returns>
+        </member>
+        <member name="T:ProfessionalPersonalityTypeTest.Helpers.JwtMiddleware">
+            <summary>
+            Custom JWT Middleware
+            </summary>
         </member>
         <member name="P:ProfessionalPersonalityTypeTest.Models.AuthenticateRequest.Login">
             <summary>
@@ -194,52 +201,6 @@
         <member name="P:ProfessionalPersonalityTypeTest.Models.UserCreate.Password">
             <summary>
             User's password
-            </summary>
-        </member>
-        <member name="T:ProfessionalPersonalityTypeTest.Models.UserResultCreate">
-            <summary>
-            Request model for creating user's test result
-            </summary>
-        </member>
-        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultCreate.UserId">
-            <summary>
-            User's id 
-            </summary>
-        </member>
-        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultCreate.R">
-            <summary>
-            Realistic type
-            Сontains the sum of the selected professions of the given type
-            </summary>
-        </member>
-        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultCreate.I">
-            <summary>
-            Investigative type
-            Сontains the sum of the selected professions of the given type
-            </summary>
-        </member>
-        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultCreate.A">
-            <summary>
-            Artistic type
-            Сontains the sum of the selected professions of the given type
-            </summary>
-        </member>
-        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultCreate.S">
-            <summary>
-            Social type
-            Сontains the sum of the selected professions of the given type
-            </summary>
-        </member>
-        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultCreate.E">
-            <summary>
-            Enterprising type
-            Сontains the sum of the selected professions of the given type
-            </summary>
-        </member>
-        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultCreate.C">
-            <summary>
-            Conventional type
-            Сontains the sum of the selected professions of the given type
             </summary>
         </member>
         <member name="T:ProfessionalPersonalityTypeTest.Models.UserResultUpdate">

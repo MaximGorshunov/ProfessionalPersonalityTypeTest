@@ -11,6 +11,9 @@ using Service.IServices;
 
 namespace ProfessionalPersonalityTypeTest.Helpers
 {
+    /// <summary>
+    /// Custom JWT Middleware
+    /// </summary>
     public class JwtMiddleware
     {
         private readonly RequestDelegate _next;

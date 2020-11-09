@@ -16,6 +16,7 @@ namespace DBRepository
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) 
         {
+            //USER
             modelBuilder.Entity<User>(eb =>
             {
                 eb.Property(b => b.Login).HasMaxLength(20).IsRequired();
@@ -31,6 +32,7 @@ namespace DBRepository
 
             modelBuilder.Entity<User>().Ignore(b => b.Role);
 
+            //USER RESULT
             modelBuilder.Entity<UserResult>(eb =>
             {
                 eb.Property(b => b.UserId).IsRequired();
@@ -52,6 +54,7 @@ namespace DBRepository
                      .HasForeignKey<UserResult>(k => k.UserId)
                      .OnDelete(DeleteBehavior.Cascade);
 
+            ///QUESTION
             modelBuilder.Entity<Question>(eb => { eb.Property(b => b.Number).IsRequired(); });
 
             modelBuilder.Entity<Question>()
@@ -69,6 +72,7 @@ namespace DBRepository
                  .HasForeignKey(k => k.ProfessionIdSecond)
                  .OnDelete(DeleteBehavior.NoAction);
 
+            //PROFESSION
             modelBuilder.Entity<Profession>(eb =>
             {
                 eb.Property(b => b.Name).HasMaxLength(100).IsRequired();
