@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Models
 {
@@ -13,6 +14,6 @@ namespace Models
         public string Password { get; set; }
         public string Role => (IsAdmin ?  Roles.Admin : Roles.User);
 
-        public UserResult UserResult { get; set; }
+        public ICollection<UserResult> UserResults { get; set; }
     }
 }

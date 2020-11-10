@@ -87,7 +87,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 response.ErrorMessage = "Username or password is incorrect";
                 return BadRequest(response);
             }
-            catch(Exception ex)
+            catch
             {
                 ApiResponse<AuthenticateResponse> response = new ApiResponse<AuthenticateResponse>();
                 response.ErrorMessage = "Autorisation error";
@@ -134,7 +134,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 response.ErrorMessage = "Username or password is incorrect";
                 return BadRequest(response);
             }
-            catch(Exception ex)
+            catch
             {
                 ApiResponse<RegistrationRequest> response = new ApiResponse<RegistrationRequest>();
                 response.ErrorMessage = "Registration error";

@@ -90,7 +90,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch (Exception ex)
             {
                 ApiResponse<UserGet> response = new ApiResponse<UserGet>();
-                response.ErrorMessage = "Couldn't get users";
+                response.ErrorMessage = $"Couldn't get users  : {ex.Message}";
                 return Json(response);
             }
         }
@@ -136,7 +136,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch (Exception ex)
             {
                 ApiResponse<UserGet> response = new ApiResponse<UserGet>();
-                response.ErrorMessage = "Couldn't create user";
+                response.ErrorMessage = $"Couldn't create user : {ex.Message}";
                 return Json(response);
             }
         }
@@ -187,7 +187,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch (Exception ex)
             {
                 ApiResponse<UserGet> response = new ApiResponse<UserGet>();
-                response.ErrorMessage = "Couldn't update user";
+                response.ErrorMessage = $"Couldn't update user : {ex.Message}";
                 return Json(response);
             }
         }
@@ -211,7 +211,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch (Exception ex)
             {
                 ApiResponse<UserGet> response = new ApiResponse<UserGet>();
-                response.ErrorMessage = "Couldn't delete user";
+                response.ErrorMessage = $"Couldn't delete user : {ex.Message}";
                 return Json(response);
             }
         }

@@ -65,7 +65,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch (Exception ex)
             {
                 ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
-                response.ErrorMessage = $"Couldn't get user result {ex.Message}";
+                response.ErrorMessage = $"Couldn't get user's result {ex.Message}";
                 return Json(response);
             }
         }
@@ -75,13 +75,14 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         /// Only admin is allowed.
         /// </summary>
         /// <returns></returns>
-        [HttpGet("getAll")]
+        [HttpGet("getall")]
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> GetAll()
         {
             try
             {
                 var userResults = await userResultService.GetAll();
+
                 var _userResults = userResults.Select(u => new UserResultGet
                 {
                     Id = u.Id,
@@ -104,21 +105,101 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch (Exception ex)
             {
                 ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
-                response.ErrorMessage = "Couldn't get users results";
+                response.ErrorMessage = $"Couldn't get user's results : {ex.Message}";
                 return Json(response);
             }
         }
 
         /// <summary>
-        /// Create new test result after completing.
+        /// Get all test's results of current user.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("getall-current-user")]
+        [Authorize]
+        public async Task<IActionResult> GetAllCurrentUser()
+        {
+            try
+            {
+                var currentUserId = int.Parse(User.Identity.Name);
+
+                var userResults = await userResultService.GetAllForUser(currentUserId);
+
+                var _userResults = userResults.Select(u => new UserResultGet
+                {
+                    Id = u.Id,
+                    UserId = u.UserId,
+                    Date = u.Date,
+                    R = u.R,
+                    I = u.I,
+                    A = u.A,
+                    S = u.S,
+                    E = u.E,
+                    C = u.C
+                }).ToList();
+
+                ApiResponse<List<UserResultGet>> response = new ApiResponse<List<UserResultGet>>();
+
+                response.Data = _userResults;
+
+                return Json(response);
+            }
+            catch (Exception ex)
+            {
+                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
+                response.ErrorMessage = $"Couldn't get user's results : {ex.Message}";
+                return Json(response);
+            }
+        }
+
+        /// <summary>
+        /// Get all actual test's results.
+        /// Only admin is allowed.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("getall-actual")]
+        [Authorize(Roles = Roles.Admin)]
+        public async Task<IActionResult> GetAllActual()
+        {
+            try
+            {
+                var userResults = await userResultService.GetAllActual();
+                var _userResults = userResults.Select(u => new UserResultGet
+                {
+                    Id = u.Id,
+                    UserId = u.UserId,
+                    Date = u.Date,
+                    R = u.R,
+                    I = u.I,
+                    A = u.A,
+                    S = u.S,
+                    E = u.E,
+                    C = u.C
+                }).ToList();
+
+                ApiResponse<List<UserResultGet>> response = new ApiResponse<List<UserResultGet>>();
+
+                response.Data = _userResults;
+
+                return Json(response);
+            }
+            catch (Exception ex)
+            {
+                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
+                response.ErrorMessage = $"Couldn't get actual user's results : {ex.Message}";
+                return Json(response);
+            }
+        }
+
+        /// <summary>
+        /// Generate new test result after completing.
         /// </summary>
         /// <param name="answers">
-        /// List of profession's id
+        /// List of profession's id that were chosen.
         /// </param>
         /// <returns></returns>
-        [HttpPost("create")]
+        [HttpPost("generate")]
         [AllowAnonymous]
-        public async Task<IActionResult> Create([FromBody] List<int> answers)
+        public async Task<IActionResult> Generate([FromBody] List<int> answers)
         {
             try
             {
@@ -161,11 +242,11 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                     UserId = int.Parse(User.Identity.Name);
                 }
 
-                var userResult = await userResultService.Create(UserId, professions);
+                var userResult = await userResultService.Generate(UserId, professions);
 
                 if (userResult == null)
                 {
-                    response.ErrorMessage = "Causes problems with updating of existing result";
+                    response.ErrorMessage = "Causes problems while generating result";
                     return Json(response);
                 }
 
@@ -191,7 +272,54 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch (Exception ex)
             {
                 ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
-                response.ErrorMessage = "Couldn't create result";
+                response.ErrorMessage = $"Couldn't generate result : {ex.Message}";
+                return Json(response);
+            }
+        }
+
+        /// <summary>
+        /// Add new user's test result in DB.
+        /// Only admin is allowed.
+        /// </summary>
+        /// <param name="userResultCreate"></param>
+        /// <returns></returns>
+        [HttpPost("create")]
+        [Authorize(Roles = Roles.Admin)]
+        public async Task<IActionResult> Create([FromBody] UserResultCreate userResultCreate)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest();
+
+                var userResult = await userResultService.Create(userResultCreate.UserId,
+                                                          userResultCreate.R, userResultCreate.I, userResultCreate.A, userResultCreate.S, userResultCreate.E, userResultCreate.C);
+                
+                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
+                
+                if (userResult == null)
+                {
+                    response.ErrorMessage = "Causes problems while creating result";
+                    return Json(response);
+                }
+
+                UserResultGet _userResult = new UserResultGet();
+                _userResult.Id = userResult.Id;
+                _userResult.UserId = userResult.UserId;
+                _userResult.Date = userResult.Date;
+                _userResult.R = userResult.R;
+                _userResult.I = userResult.I;
+                _userResult.A = userResult.A;
+                _userResult.S = userResult.S;
+                _userResult.E = userResult.E;
+                _userResult.C = userResult.C;
+                response.Data = _userResult;
+                return Json(response);
+            }
+            catch (Exception ex)
+            {
+                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
+                response.ErrorMessage = $"Couldn't create user's result : {ex.Message}";
                 return Json(response);
             }
         }
@@ -245,7 +373,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch (Exception ex)
             {
                 ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
-                response.ErrorMessage = "Couldn't update user result";
+                response.ErrorMessage = $"Couldn't update user's result : {ex.Message}";
                 return Json(response);
             }
         }
@@ -275,7 +403,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch (Exception ex)
             {
                 ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
-                response.ErrorMessage = "Couldn't delete user result";
+                response.ErrorMessage = $"Couldn't delete user's result : {ex.Message}";
                 return Json(response);
             }
         }

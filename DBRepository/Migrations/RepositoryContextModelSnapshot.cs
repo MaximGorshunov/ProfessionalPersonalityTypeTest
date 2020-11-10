@@ -133,8 +133,7 @@ namespace DBRepository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserResults");
                 });
@@ -157,8 +156,8 @@ namespace DBRepository.Migrations
             modelBuilder.Entity("Models.UserResult", b =>
                 {
                     b.HasOne("Models.User", "User")
-                        .WithOne("UserResult")
-                        .HasForeignKey("Models.UserResult", "UserId")
+                        .WithMany("UserResults")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

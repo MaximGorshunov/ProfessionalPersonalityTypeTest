@@ -20,7 +20,24 @@ namespace Service.Services
 
         public async Task<List<UserResult>> GetAll()
         {
-            return await userResultRepository.GetAll().ToListAsync(); ;
+            return await userResultRepository.GetAll().ToListAsync();
+        }
+
+        public async Task<List<UserResult>> GetAllActual()
+        {
+            //TODO:
+            var all = await userResultRepository.GetAll().ToListAsync();
+            var actual = all.OrderByDescending(x => x.Date)
+                                        .GroupBy(x => x.UserId)
+                                        .Select(x => x.First())
+                                        .ToList();
+
+            return actual;
+        }
+
+        public async Task<List<UserResult>> GetAllForUser(int userId)
+        {
+            return await userResultRepository.GetAll().Where(x => x.UserId == userId).ToListAsync();
         }
 
         public async Task<UserResult> GetById(int id) 
@@ -33,7 +50,7 @@ namespace Service.Services
             return await userResultRepository.DeleteUserResult(id);
         }
 
-        public async Task<UserResult> Create(int? userId, List<Profession> professions) 
+        public async Task<UserResult> Generate(int? userId, List<Profession> professions) 
         {
             UserResult newUserResult = new UserResult();
 
@@ -74,29 +91,18 @@ namespace Service.Services
 
             if (userId != null)
             {
-                var _userResult = await userResultRepository.GetAll()
-                    .Where(u => u.UserId == userId)
-                    .FirstOrDefaultAsync();
+                newUserResult.UserId = (int)userId;
+                newUserResult.Date = DateTime.UtcNow;
+                newUserResult.R = r;
+                newUserResult.I = i;
+                newUserResult.A = a;
+                newUserResult.S = s;
+                newUserResult.E = e;
+                newUserResult.C = c;
 
-                if (_userResult == null)
-                {
-                    newUserResult.UserId = (int)userId;
-                    newUserResult.Date = DateTime.UtcNow;
-                    newUserResult.R = r;
-                    newUserResult.I = i;
-                    newUserResult.A = a;
-                    newUserResult.S = s;
-                    newUserResult.E = e;
-                    newUserResult.C = c;
+                newUserResult = await userResultRepository.CreateUserResult(newUserResult);
 
-                    newUserResult = await userResultRepository.CreateUserResult(newUserResult);
-
-                    return newUserResult;
-                }
-                else
-                {
-                    return await Update(_userResult.Id, r, i, a, s, e, c);
-                }
+                return newUserResult;
             }
             else
             {
@@ -110,6 +116,24 @@ namespace Service.Services
 
                 return newUserResult;
             }
+        }
+
+        public async Task<UserResult> Create(int userId, int r, int i, int a, int s, int e, int c)
+        {
+            UserResult newUserResult = new UserResult();
+
+           newUserResult.UserId = userId;
+           newUserResult.Date = DateTime.UtcNow;
+           newUserResult.R = r;
+           newUserResult.I = i;
+           newUserResult.A = a;
+           newUserResult.S = s;
+           newUserResult.E = e;
+           newUserResult.C = c;
+
+           newUserResult = await userResultRepository.CreateUserResult(newUserResult);
+
+           return newUserResult;
         }
 
         public async Task<UserResult> Update(int id, int r, int i, int a, int s, int e, int c) 

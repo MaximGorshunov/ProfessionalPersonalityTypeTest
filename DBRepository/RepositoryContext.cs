@@ -50,8 +50,8 @@ namespace DBRepository
 
             modelBuilder.Entity<UserResult>()
                      .HasOne(e => e.User)
-                     .WithOne(e => e.UserResult)
-                     .HasForeignKey<UserResult>(k => k.UserId)
+                     .WithMany(e => e.UserResults)
+                     .HasForeignKey(k => k.UserId)
                      .OnDelete(DeleteBehavior.Cascade);
 
             ///QUESTION

@@ -128,7 +128,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch (Exception ex) 
             {
                 ApiResponse<QuestionGet> response = new ApiResponse<QuestionGet>();
-                response.ErrorMessage = "Couldn't get questions";
+                response.ErrorMessage = $"Couldn't get questions  : {ex.Message}";
                 return Json(response);
             }
         }
