@@ -97,6 +97,7 @@
         <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.GetAllCurrentUser">
             <summary>
             Get all test's results of current user.
+            Create new test result after completing.
             </summary>
             <returns></returns>
         </member>
