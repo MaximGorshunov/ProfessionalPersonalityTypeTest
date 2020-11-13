@@ -30,7 +30,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
         private async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model)
         {
-            var user = await userService.GetAll();
+            var user = await userService.GetAll(null, model.Login, null, null, null, null);
             var checkUser = user.Where(u => u.Login == model.Login && u.Password == model.Password).FirstOrDefault();
 
             // return null if user not found

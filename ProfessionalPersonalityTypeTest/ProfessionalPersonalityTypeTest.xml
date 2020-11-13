@@ -46,7 +46,7 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserController.GetAll">
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserController.GetAll(ProfessionalPersonalityTypeTest.Models.UserGetAllRequest)">
             <summary>
             Get all users from DB.
             Only Admin is allowed.
@@ -87,24 +87,9 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.GetAll">
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.GetAll(ProfessionalPersonalityTypeTest.Models.UserResultGetAllRequest)">
             <summary>
-            Get all test's results.
-            Only admin is allowed.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.GetAllCurrentUser">
-            <summary>
-            Get all test's results of current user.
-            Create new test result after completing.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.GetAllActual">
-            <summary>
-            Get all actual test's results.
-            Only admin is allowed.
+            Get list of result's by filters.
             </summary>
             <returns></returns>
         </member>
@@ -223,6 +208,45 @@
             User's password
             </summary>
         </member>
+        <member name="T:ProfessionalPersonalityTypeTest.Models.UserGetAllRequest">
+            <summary>
+            Request model for getting list of users
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserGetAllRequest.Gender">
+            <summary>
+            Male = 1
+            Female = 2
+            None = Null
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserGetAllRequest.LoginFilter">
+            <summary>
+            Filter by user's login
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserGetAllRequest.EmailFilter">
+            <summary>
+            Filter by user's email
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserGetAllRequest.AgeMin">
+            <summary>
+            Filter by user's min age
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserGetAllRequest.AgeMax">
+            <summary>
+            Filter by user's max age
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserGetAllRequest.Role">
+            <summary>
+            User = 1
+            Admin = 2
+            None = Null
+            </summary>
+        </member>
         <member name="T:ProfessionalPersonalityTypeTest.Models.UserResultCreate">
             <summary>
             Request model for creating user's test result
@@ -267,6 +291,48 @@
             <summary>
             Conventional type
             Сontains the sum of the selected professions of the given type
+            </summary>
+        </member>
+        <member name="T:ProfessionalPersonalityTypeTest.Models.UserResultGetAllRequest">
+            <summary>
+            Request model for getting list of user's results
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultGetAllRequest.Gender">
+            <summary>
+            Male = 1
+            Female = 2
+            None = null
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultGetAllRequest.LoginFilter">
+            <summary>
+            Filter by user's login
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultGetAllRequest.AgeMin">
+            <summary>
+            Filter by user's min age
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultGetAllRequest.AgeMax">
+            <summary>
+            Filter by user's max age
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultGetAllRequest.DataMin">
+            <summary>
+            Filter by time period
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultGetAllRequest.DataMax">
+            <summary>
+            Filter by time period
+            </summary>
+        </member>
+        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultGetAllRequest.Actual">
+            <summary>
+            If true get only actual results
             </summary>
         </member>
         <member name="T:ProfessionalPersonalityTypeTest.Models.UserResultUpdate">

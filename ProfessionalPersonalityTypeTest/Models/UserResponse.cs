@@ -2,7 +2,7 @@
 
 namespace ProfessionalPersonalityTypeTest.Models
 {
-    public class UserGet
+    public class UserResponse
     {
         public int Id { get; set; }
         public bool IsAdmin { get; set; }

@@ -1,6 +1,7 @@
 ﻿using DBRepository.IRepositories;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using Service.Helpers;
 using Service.IServices;
 using System;
 using System.Collections.Generic;
@@ -18,26 +19,13 @@ namespace Service.Services
             userResultRepository = _userResultRepository;
         }
 
-        public async Task<List<UserResult>> GetAll()
+        public async Task<List<UserResult>> GetByFilters(DateTime? dataMin, DateTime? dataMax, int? ageMin, int? ageMax, Gender? gender, string loginFilter, bool actual)
         {
-            return await userResultRepository.GetAll().ToListAsync();
-        }
+            bool? isMan = null;
+            if (gender == Gender.Male) isMan = true;
+            else if(gender == Gender.Female) isMan = false;
 
-        public async Task<List<UserResult>> GetAllActual()
-        {
-            //TODO:
-            var all = await userResultRepository.GetAll().ToListAsync();
-            var actual = all.OrderByDescending(x => x.Date)
-                                        .GroupBy(x => x.UserId)
-                                        .Select(x => x.First())
-                                        .ToList();
-
-            return actual;
-        }
-
-        public async Task<List<UserResult>> GetAllForUser(int userId)
-        {
-            return await userResultRepository.GetAll().Where(x => x.UserId == userId).ToListAsync();
+            return await userResultRepository.GetByFilters(dataMin, dataMax, ageMin, ageMax, isMan, loginFilter, actual);
         }
 
         public async Task<UserResult> GetById(int id) 

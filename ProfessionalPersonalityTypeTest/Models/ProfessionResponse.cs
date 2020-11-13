@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace ProfessionalPersonalityTypeTest.Models
 {
-    public class QuestionGet
+    public class ProfessionResponse
     {
         public int Id { get; set; }
-        public int Number { get; set; }
-        public ICollection<ProfessionGet> professions { get; set; }
+        public string Name { get; set; }
+        public string Type { get; set; }
     }
 }

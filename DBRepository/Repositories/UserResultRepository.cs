@@ -3,6 +3,8 @@ using DBRepository.IRepositories;
 using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace DBRepository.Repositories
 {
@@ -10,6 +12,11 @@ namespace DBRepository.Repositories
     {
         public UserResultRepository(RepositoryContext repositoryContext) : base(repositoryContext) { }
 
+        public async Task<List<UserResult>> GetByFilters(DateTime? dataMin, DateTime? dataMax, int? ageMin, int? ageMax, bool? isMan, string loginFilter, bool actual)
+        {
+            return await dbSet.FromSqlInterpolated($"EXECUTE dbo.GetResultsByFilters {dataMin}, {dataMax}, {ageMin}, {ageMax}, {isMan}, {loginFilter}, {actual}").ToListAsync();
+        }
+        
         public async Task<UserResult> CreateUserResult(UserResult userResult)
         {
             try

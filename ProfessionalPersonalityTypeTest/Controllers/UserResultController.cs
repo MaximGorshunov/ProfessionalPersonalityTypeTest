@@ -17,12 +17,14 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         private readonly IUserResultService userResultService;
         private readonly IQuestionService questionService;
         private readonly IProfessionService professionService;
+        private readonly IUserService userService;
 
-        public UserResultController(IUserResultService _userResultService, IQuestionService _questionService, IProfessionService _professionService)
+        public UserResultController(IUserResultService _userResultService, IQuestionService _questionService, IProfessionService _professionService, IUserService _userService)
         {
             userResultService = _userResultService;
             questionService = _questionService;
             professionService = _professionService;
+            userService = _userService;
         }
 
         /// <summary>
@@ -44,11 +46,23 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 if (userResult.UserId != currentUserId && !User.IsInRole(Roles.Admin))
                     return Forbid();
 
-                UserResultGet _userResult = new UserResultGet();
+                var user = await userService.GetById(userResult.UserId);
+
+                UserResponse _user = new UserResponse();
+
+                _user.Id = user.Id;
+                _user.IsAdmin = user.IsAdmin;
+                _user.Login = user.Login;
+                _user.Email = user.Email;
+                _user.Birthdate = user.Birthdate;
+                _user.IsMan = user.IsMan;
+
+                UserResultResponse _userResult = new UserResultResponse();
 
                 _userResult.Id = userResult.Id;
-                _userResult.UserId = userResult.UserId;
                 _userResult.Date = userResult.Date;
+                _userResult.UserId = userResult.UserId;
+                _userResult.User = _user;
                 _userResult.R = userResult.R;
                 _userResult.I = userResult.I;
                 _userResult.A = userResult.A;
@@ -56,7 +70,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 _userResult.E = userResult.E;
                 _userResult.C = userResult.C;
 
-                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
+                ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
 
                 response.Data = _userResult;
 
@@ -64,71 +78,42 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex)
             {
-                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
+                ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
                 response.ErrorMessage = $"Couldn't get user's result {ex.Message}";
                 return Json(response);
             }
         }
 
         /// <summary>
-        /// Get all test's results.
-        /// Only admin is allowed.
+        /// Get list of result's by filters.
+        /// If in role "User" get list of his own results.
         /// </summary>
         /// <returns></returns>
-        [HttpGet("getall")]
-        [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> GetAll()
-        {
-            try
-            {
-                var userResults = await userResultService.GetAll();
-
-                var _userResults = userResults.Select(u => new UserResultGet
-                {
-                    Id = u.Id,
-                    UserId = u.UserId,
-                    Date = u.Date,
-                    R = u.R,
-                    I = u.I,
-                    A = u.A,
-                    S = u.S,
-                    E = u.E,
-                    C = u.C
-                }).ToList();
-
-                ApiResponse<List<UserResultGet>> response = new ApiResponse<List<UserResultGet>>();
-
-                response.Data = _userResults;
-
-                return Json(response);
-            }
-            catch (Exception ex)
-            {
-                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
-                response.ErrorMessage = $"Couldn't get user's results : {ex.Message}";
-                return Json(response);
-            }
-        }
-
-        /// <summary>
-        /// Get all test's results of current user.
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("getall-current-user")]
+        [HttpPost("getall")]
         [Authorize]
-        public async Task<IActionResult> GetAllCurrentUser()
+        public async Task<IActionResult> GetAll([FromBody] UserResultGetAllRequest request)
         {
             try
             {
-                var currentUserId = int.Parse(User.Identity.Name);
+                if (!User.IsInRole(Roles.Admin)) 
+                {
+                    var currentUserId = int.Parse(User.Identity.Name);
+                    var user = await userService.GetById(currentUserId);
+                    request.LoginFilter = user.Login;
+                    request.Gender = null;
+                    request.AgeMin = null;
+                    request.AgeMax = null;
+                }
 
-                var userResults = await userResultService.GetAllForUser(currentUserId);
+                List<UserResult> userResults = new List<UserResult>();
 
-                var _userResults = userResults.Select(u => new UserResultGet
+                userResults = await userResultService.GetByFilters(request.DataMin, request.DataMax, request.AgeMin, request.AgeMax, request.Gender, request.LoginFilter, request.Actual);
+
+                var _userResults = userResults.Select(u => new UserResultResponse
                 {
                     Id = u.Id,
-                    UserId = u.UserId,
                     Date = u.Date,
+                    UserId = u.UserId,
                     R = u.R,
                     I = u.I,
                     A = u.A,
@@ -137,7 +122,23 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                     C = u.C
                 }).ToList();
 
-                ApiResponse<List<UserResultGet>> response = new ApiResponse<List<UserResultGet>>();
+                foreach(var ur in _userResults)
+                {
+                    var user = await userService.GetById((int)ur.UserId);
+
+                    UserResponse _user = new UserResponse();
+
+                    _user.Id = user.Id;
+                    _user.IsAdmin = user.IsAdmin;
+                    _user.Login = user.Login;
+                    _user.Email = user.Email;
+                    _user.Birthdate = user.Birthdate;
+                    _user.IsMan = user.IsMan;
+
+                    ur.User = _user;
+                }
+
+                ApiResponse<List<UserResultResponse>> response = new ApiResponse<List<UserResultResponse>>();
 
                 response.Data = _userResults;
 
@@ -145,47 +146,8 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex)
             {
-                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
+                ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
                 response.ErrorMessage = $"Couldn't get user's results : {ex.Message}";
-                return Json(response);
-            }
-        }
-
-        /// <summary>
-        /// Get all actual test's results.
-        /// Only admin is allowed.
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("getall-actual")]
-        [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> GetAllActual()
-        {
-            try
-            {
-                var userResults = await userResultService.GetAllActual();
-                var _userResults = userResults.Select(u => new UserResultGet
-                {
-                    Id = u.Id,
-                    UserId = u.UserId,
-                    Date = u.Date,
-                    R = u.R,
-                    I = u.I,
-                    A = u.A,
-                    S = u.S,
-                    E = u.E,
-                    C = u.C
-                }).ToList();
-
-                ApiResponse<List<UserResultGet>> response = new ApiResponse<List<UserResultGet>>();
-
-                response.Data = _userResults;
-
-                return Json(response);
-            }
-            catch (Exception ex)
-            {
-                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
-                response.ErrorMessage = $"Couldn't get actual user's results : {ex.Message}";
                 return Json(response);
             }
         }
@@ -203,7 +165,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
-                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
+                ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
 
                 var questions = await questionService.GetAll();
 
@@ -250,12 +212,23 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                     return Json(response);
                 }
 
-                UserResultGet _userResult = new UserResultGet();
+                UserResultResponse _userResult = new UserResultResponse();
 
                 if (isAuthenticated)
                 {
+                    UserResponse _user = new UserResponse();
+                    var user = await userService.GetById((int)UserId);
+
+                    _user.Id = user.Id;
+                    _user.IsAdmin = user.IsAdmin;
+                    _user.Login = user.Login;
+                    _user.Email = user.Email;
+                    _user.Birthdate = user.Birthdate;
+                    _user.IsMan = user.IsMan;
+
                     _userResult.Id = userResult.Id;
                     _userResult.UserId = userResult.UserId;
+                    _userResult.User = _user;
                 }
                 _userResult.Date = userResult.Date;
                 _userResult.R = userResult.R;
@@ -271,7 +244,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex)
             {
-                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
+                ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
                 response.ErrorMessage = $"Couldn't generate result : {ex.Message}";
                 return Json(response);
             }
@@ -295,7 +268,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 var userResult = await userResultService.Create(userResultCreate.UserId,
                                                           userResultCreate.R, userResultCreate.I, userResultCreate.A, userResultCreate.S, userResultCreate.E, userResultCreate.C);
                 
-                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
+                ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
                 
                 if (userResult == null)
                 {
@@ -303,9 +276,21 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                     return Json(response);
                 }
 
-                UserResultGet _userResult = new UserResultGet();
+                UserResponse _user = new UserResponse();
+                var user = await userService.GetById(userResult.UserId);
+
+                _user.Id = user.Id;
+                _user.IsAdmin = user.IsAdmin;
+                _user.Login = user.Login;
+                _user.Email = user.Email;
+                _user.Birthdate = user.Birthdate;
+                _user.IsMan = user.IsMan;
+
+                UserResultResponse _userResult = new UserResultResponse();
+                
                 _userResult.Id = userResult.Id;
                 _userResult.UserId = userResult.UserId;
+                _userResult.User = _user;
                 _userResult.Date = userResult.Date;
                 _userResult.R = userResult.R;
                 _userResult.I = userResult.I;
@@ -313,12 +298,14 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 _userResult.S = userResult.S;
                 _userResult.E = userResult.E;
                 _userResult.C = userResult.C;
+                
                 response.Data = _userResult;
+
                 return Json(response);
             }
             catch (Exception ex)
             {
-                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
+                ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
                 response.ErrorMessage = $"Couldn't create user's result : {ex.Message}";
                 return Json(response);
             }
@@ -346,7 +333,8 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 var userResult = await userResultService.Update(userResultUpdate.Id,
                                                         userResultUpdate.R, userResultUpdate.I, userResultUpdate.A, userResultUpdate.S, userResultUpdate.E, userResultUpdate.C);
-                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
+                
+                ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
 
                 if (userResult == null)
                 {
@@ -354,10 +342,21 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                     return Json(response);
                 }
 
-                UserResultGet _userResult = new UserResultGet();
+                UserResponse _user = new UserResponse();
+                var user = await userService.GetById(userResult.UserId);
+
+                _user.Id = user.Id;
+                _user.IsAdmin = user.IsAdmin;
+                _user.Login = user.Login;
+                _user.Email = user.Email;
+                _user.Birthdate = user.Birthdate;
+                _user.IsMan = user.IsMan;
+
+                UserResultResponse _userResult = new UserResultResponse();
 
                 _userResult.Id = userResult.Id;
                 _userResult.UserId = userResult.UserId;
+                _userResult.User = _user;
                 _userResult.Date = userResult.Date;
                 _userResult.R = userResult.R;
                 _userResult.I = userResult.I;
@@ -372,7 +371,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex)
             {
-                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
+                ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
                 response.ErrorMessage = $"Couldn't update user's result : {ex.Message}";
                 return Json(response);
             }
@@ -402,7 +401,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex)
             {
-                ApiResponse<UserResultGet> response = new ApiResponse<UserResultGet>();
+                ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
                 response.ErrorMessage = $"Couldn't delete user's result : {ex.Message}";
                 return Json(response);
             }

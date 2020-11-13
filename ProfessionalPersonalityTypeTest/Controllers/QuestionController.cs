@@ -35,30 +35,30 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
-                ApiResponse<QuestionGet> response = new ApiResponse<QuestionGet>();
+                ApiResponse<QuestionResponse> response = new ApiResponse<QuestionResponse>();
 
                 var question = await questionService.GetById(id);
                 var professionFirst = await professionService.GetById(question.ProfessionIdFirst);
                 var professionSecond = await professionService.GetById(question.ProfessionIdSecond);
 
-                ProfessionGet professionGetFirst = new ProfessionGet();
+                ProfessionResponse professionGetFirst = new ProfessionResponse();
 
                 professionGetFirst.Id = professionFirst.Id;
                 professionGetFirst.Name = professionFirst.Name;
                 professionGetFirst.Type = professionFirst.ProfType.ToString();
 
-                ProfessionGet professionGetSecond = new ProfessionGet();
+                ProfessionResponse professionGetSecond = new ProfessionResponse();
 
                 professionGetSecond.Id = professionSecond.Id;
                 professionGetSecond.Name = professionSecond.Name;
                 professionGetSecond.Type = professionSecond.ProfType.ToString();
 
-                QuestionGet questionGet = new QuestionGet();
+                QuestionResponse questionGet = new QuestionResponse();
 
                 questionGet.Id = question.Id;
                 questionGet.Number = question.Number;
 
-                questionGet.professions = new Collection<ProfessionGet>();
+                questionGet.professions = new Collection<ProfessionResponse>();
 
                 questionGet.professions.Add(professionGetFirst);
                 questionGet.professions.Add(professionGetSecond);
@@ -69,7 +69,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex)
             {
-                ApiResponse<QuestionGet> response = new ApiResponse<QuestionGet>();
+                ApiResponse<QuestionResponse> response = new ApiResponse<QuestionResponse>();
                 response.ErrorMessage = $"Couldn't get question {ex.Message}";
                 return Json(response);
             }
@@ -86,8 +86,8 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
-                ApiResponse<List<QuestionGet>> responce = new ApiResponse<List<QuestionGet>>();
-                List<QuestionGet> questions = new List<QuestionGet>();
+                ApiResponse<List<QuestionResponse>> responce = new ApiResponse<List<QuestionResponse>>();
+                List<QuestionResponse> questions = new List<QuestionResponse>();
                 
                 var _questions = await questionService.GetAll();
                 
@@ -96,24 +96,24 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                     var professionFirst = await professionService.GetById(q.ProfessionIdFirst);
                     var professionSecond = await professionService.GetById(q.ProfessionIdSecond);
 
-                    ProfessionGet professionGetFirst = new ProfessionGet();
+                    ProfessionResponse professionGetFirst = new ProfessionResponse();
 
                     professionGetFirst.Id = professionFirst.Id;
                     professionGetFirst.Name = professionFirst.Name;
                     professionGetFirst.Type = professionFirst.ProfType.ToString();
 
-                    ProfessionGet professionGetSecond = new ProfessionGet();
+                    ProfessionResponse professionGetSecond = new ProfessionResponse();
 
                     professionGetSecond.Id = professionSecond.Id;
                     professionGetSecond.Name = professionSecond.Name;
                     professionGetSecond.Type = professionSecond.ProfType.ToString();
 
-                    QuestionGet questionGet = new QuestionGet();
+                    QuestionResponse questionGet = new QuestionResponse();
 
                     questionGet.Id = q.Id;
                     questionGet.Number = q.Number;
 
-                    questionGet.professions = new Collection<ProfessionGet>();
+                    questionGet.professions = new Collection<ProfessionResponse>();
 
                     questionGet.professions.Add(professionGetFirst);
                     questionGet.professions.Add(professionGetSecond);
@@ -127,7 +127,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex) 
             {
-                ApiResponse<QuestionGet> response = new ApiResponse<QuestionGet>();
+                ApiResponse<QuestionResponse> response = new ApiResponse<QuestionResponse>();
                 response.ErrorMessage = $"Couldn't get questions  : {ex.Message}";
                 return Json(response);
             }

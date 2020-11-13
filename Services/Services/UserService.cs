@@ -6,6 +6,7 @@ using Service.IServices;
 using Models;
 using DBRepository.IRepositories;
 using Microsoft.EntityFrameworkCore;
+using Service.Helpers;
 
 namespace Service.Services
 {
@@ -18,9 +19,28 @@ namespace Service.Services
             userRepository = _userRepository;
         }
 
-        public async Task<List<User>> GetAll()
+        public async Task<List<User>> GetAll(Gender? gender, string loginFilter, string emailFilter, int? ageMin, int? ageMax, Role? role)
         {
-            return await userRepository.GetAll().ToListAsync();
+            var result = userRepository.GetAll();
+
+            if (gender == Gender.Male) { result = result.Where(u => u.IsMan); }
+            if (gender == Gender.Female) { result = result.Where(u => !u.IsMan); }
+            if (loginFilter != null) { result = result.Where(u => u.Login == loginFilter); }
+            if (emailFilter != null) { result = result.Where(u => u.Email == emailFilter); }
+            if (ageMin != null)
+            {
+                var today = DateTime.UtcNow;
+                result = result.Where(u => (today.Year - u.Birthdate.Year) >= ageMin);
+            }
+            if (ageMax != null)
+            {
+                var today = DateTime.UtcNow;
+                result = result.Where(u => (today.Year - u.Birthdate.Year) <= ageMax);
+            }
+            if (role == Role.User) { result = result.Where(u => !u.IsAdmin); }
+            if (role == Role.Admin) { result = result.Where(u => u.IsAdmin); }
+
+            return await result.ToListAsync();
         }
 
         public async Task<User> GetById(int id)

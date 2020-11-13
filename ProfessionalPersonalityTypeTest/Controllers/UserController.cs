@@ -39,7 +39,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                     return Forbid();
 
                 var user = await userService.GetById(id);
-                UserGet _user = new UserGet();
+                UserResponse _user = new UserResponse();
 
                 _user.Id = user.Id;
                 _user.IsAdmin = user.IsAdmin;
@@ -48,7 +48,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 _user.Birthdate = user.Birthdate;
                 _user.IsMan = user.IsMan;
 
-                ApiResponse<UserGet> response = new ApiResponse<UserGet>();
+                ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
 
                 response.Data = _user;
                 
@@ -56,7 +56,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch(Exception ex)
             {
-                ApiResponse<UserGet> response = new ApiResponse<UserGet>();
+                ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
                 response.ErrorMessage = $"Couldn't get user : {ex.Message}";
                 return Json(response);
             }
@@ -67,21 +67,22 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         /// Only Admin is allowed.
         /// </summary>
         /// <returns></returns>
-        [HttpGet("getAll")]
+        [HttpPost("getall")]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromBody] UserGetAllRequest request)
         {
             try
             {
-                var users = await userService.GetAll();
-                var _users = users.Select(u => new UserGet { Id = u.Id,
+                var users = await userService.GetAll(request.Gender, request.LoginFilter, request.EmailFilter, request.AgeMin, request.AgeMax, request.Role);
+                
+                var _users = users.Select(u => new UserResponse { Id = u.Id,
                                                              IsAdmin = u.IsAdmin,
                                                              Login = u.Login,
                                                              Email = u.Email,
                                                              Birthdate = u.Birthdate,
                                                              IsMan = u.IsMan }).ToList();
                 
-                ApiResponse<List<UserGet>> response = new ApiResponse<List<UserGet>>();
+                ApiResponse<List<UserResponse>> response = new ApiResponse<List<UserResponse>>();
                 
                 response.Data = _users;
                 
@@ -89,7 +90,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex)
             {
-                ApiResponse<UserGet> response = new ApiResponse<UserGet>();
+                ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
                 response.ErrorMessage = $"Couldn't get users  : {ex.Message}";
                 return Json(response);
             }
@@ -107,7 +108,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
-                ApiResponse<UserGet> response = new ApiResponse<UserGet>();
+                ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
 
                 if (!ModelState.IsValid)
                         return BadRequest();
@@ -120,7 +121,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                     return Json(response);
                 }
 
-                UserGet _user = new UserGet();
+                UserResponse _user = new UserResponse();
 
                 _user.Id = user.Id;
                 _user.IsAdmin = user.IsAdmin;
@@ -135,7 +136,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex)
             {
-                ApiResponse<UserGet> response = new ApiResponse<UserGet>();
+                ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
                 response.ErrorMessage = $"Couldn't create user : {ex.Message}";
                 return Json(response);
             }
@@ -154,7 +155,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
-                ApiResponse<UserGet> response = new ApiResponse<UserGet>();
+                ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
                 
                 if (!ModelState.IsValid)
                         return BadRequest();
@@ -171,7 +172,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                     return Json(response);
                 }
 
-                UserGet _user = new UserGet();
+                UserResponse _user = new UserResponse();
 
                 _user.Id = user.Id;
                 _user.IsAdmin = user.IsAdmin;
@@ -186,7 +187,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex)
             {
-                ApiResponse<UserGet> response = new ApiResponse<UserGet>();
+                ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
                 response.ErrorMessage = $"Couldn't update user : {ex.Message}";
                 return Json(response);
             }
@@ -210,7 +211,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             }
             catch (Exception ex)
             {
-                ApiResponse<UserGet> response = new ApiResponse<UserGet>();
+                ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
                 response.ErrorMessage = $"Couldn't delete user : {ex.Message}";
                 return Json(response);
             }

@@ -7,7 +7,6 @@ namespace DBRepository.IRepositories
     public interface IBaseRepository<TEntity> where TEntity : class, IModel 
     {
         IQueryable<TEntity> GetAll();
-
         Task<TEntity> GetById(int id);
     }
 }
