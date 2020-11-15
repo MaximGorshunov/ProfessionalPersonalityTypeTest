@@ -90,6 +90,7 @@
         <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.GetAll(ProfessionalPersonalityTypeTest.Models.UserResultGetAllRequest)">
             <summary>
             Get list of result's by filters.
+            If in role "User" get list of his own results.
             </summary>
             <returns></returns>
         </member>

@@ -63,12 +63,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 _userResult.Date = userResult.Date;
                 _userResult.UserId = userResult.UserId;
                 _userResult.User = _user;
-                _userResult.R = userResult.R;
-                _userResult.I = userResult.I;
-                _userResult.A = userResult.A;
-                _userResult.S = userResult.S;
-                _userResult.E = userResult.E;
-                _userResult.C = userResult.C;
+
+                _userResult.Results = new List<PType>();
+
+                _userResult.Results.Add(new PType(name: "Realistic", value: userResult.R));
+                _userResult.Results.Add(new PType(name: "Investigative", value: userResult.I));
+                _userResult.Results.Add(new PType(name: "Artistic", value: userResult.A));
+                _userResult.Results.Add(new PType(name: "Social", value: userResult.S));
+                _userResult.Results.Add(new PType(name: "Enterprising", value: userResult.E));
+                _userResult.Results.Add(new PType(name: "Conventional", value: userResult.C));
 
                 ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
 
@@ -136,6 +139,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                     _user.IsMan = user.IsMan;
 
                     ur.User = _user;
+
+                    ur.Results = new List<PType>();
+
+                    ur.Results.Add(new PType(name: "Realistic", value: ur.R));
+                    ur.Results.Add(new PType(name: "Investigative", value: ur.I));
+                    ur.Results.Add(new PType(name: "Artistic", value: ur.A));
+                    ur.Results.Add(new PType(name: "Social", value: ur.S));
+                    ur.Results.Add(new PType(name: "Enterprising", value: ur.E));
+                    ur.Results.Add(new PType(name: "Conventional", value: ur.C));
                 }
 
                 ApiResponse<List<UserResultResponse>> response = new ApiResponse<List<UserResultResponse>>();
@@ -231,12 +243,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                     _userResult.User = _user;
                 }
                 _userResult.Date = userResult.Date;
-                _userResult.R = userResult.R;
-                _userResult.I = userResult.I;
-                _userResult.A = userResult.A;
-                _userResult.S = userResult.S;
-                _userResult.E = userResult.E;
-                _userResult.C = userResult.C;
+
+                _userResult.Results = new List<PType>();
+
+                _userResult.Results.Add(new PType(name: "Realistic", value: userResult.R));
+                _userResult.Results.Add(new PType(name: "Investigative", value: userResult.I));
+                _userResult.Results.Add(new PType(name: "Artistic", value: userResult.A));
+                _userResult.Results.Add(new PType(name: "Social", value: userResult.S));
+                _userResult.Results.Add(new PType(name: "Enterprising", value: userResult.E));
+                _userResult.Results.Add(new PType(name: "Conventional", value: userResult.C));
 
                 response.Data = _userResult;
 
@@ -292,13 +307,16 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 _userResult.UserId = userResult.UserId;
                 _userResult.User = _user;
                 _userResult.Date = userResult.Date;
-                _userResult.R = userResult.R;
-                _userResult.I = userResult.I;
-                _userResult.A = userResult.A;
-                _userResult.S = userResult.S;
-                _userResult.E = userResult.E;
-                _userResult.C = userResult.C;
                 
+                _userResult.Results = new List<PType>();
+
+                _userResult.Results.Add(new PType(name: "Realistic", value: userResult.R));
+                _userResult.Results.Add(new PType(name: "Investigative", value: userResult.I));
+                _userResult.Results.Add(new PType(name: "Artistic", value: userResult.A));
+                _userResult.Results.Add(new PType(name: "Social", value: userResult.S));
+                _userResult.Results.Add(new PType(name: "Enterprising", value: userResult.E));
+                _userResult.Results.Add(new PType(name: "Conventional", value: userResult.C));
+
                 response.Data = _userResult;
 
                 return Json(response);
@@ -358,12 +376,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 _userResult.UserId = userResult.UserId;
                 _userResult.User = _user;
                 _userResult.Date = userResult.Date;
-                _userResult.R = userResult.R;
-                _userResult.I = userResult.I;
-                _userResult.A = userResult.A;
-                _userResult.S = userResult.S;
-                _userResult.E = userResult.E;
-                _userResult.C = userResult.C;
+
+                _userResult.Results = new List<PType>();
+
+                _userResult.Results.Add(new PType(name: "Realistic", value: userResult.R));
+                _userResult.Results.Add(new PType(name: "Investigative", value: userResult.I));
+                _userResult.Results.Add(new PType(name: "Artistic", value: userResult.A));
+                _userResult.Results.Add(new PType(name: "Social", value: userResult.S));
+                _userResult.Results.Add(new PType(name: "Enterprising", value: userResult.E));
+                _userResult.Results.Add(new PType(name: "Conventional", value: userResult.C));
 
                 response.Data = _userResult;
 
