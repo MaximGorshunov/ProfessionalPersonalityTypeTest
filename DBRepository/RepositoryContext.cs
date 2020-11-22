@@ -75,7 +75,8 @@ namespace DBRepository
             //PROFESSION
             modelBuilder.Entity<Profession>(eb =>
             {
-                eb.Property(b => b.Name).HasMaxLength(100).IsRequired();
+                eb.Property(b => b.NameEn).HasMaxLength(100).IsRequired();
+                eb.Property(b => b.NameRu).HasMaxLength(100).IsRequired();
                 eb.Property(b => b.ProfType).IsRequired();
             });
 

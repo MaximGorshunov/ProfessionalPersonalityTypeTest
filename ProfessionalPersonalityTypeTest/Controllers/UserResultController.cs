@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using ProfessionalPersonalityTypeTest.Helpers;
 using ProfessionalPersonalityTypeTest.Models;
 using Service.IServices;
 using System;
@@ -66,12 +67,12 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 _userResult.Results = new List<PType>();
 
-                _userResult.Results.Add(new PType(name: "Realistic", value: userResult.R));
-                _userResult.Results.Add(new PType(name: "Investigative", value: userResult.I));
-                _userResult.Results.Add(new PType(name: "Artistic", value: userResult.A));
-                _userResult.Results.Add(new PType(name: "Social", value: userResult.S));
-                _userResult.Results.Add(new PType(name: "Enterprising", value: userResult.E));
-                _userResult.Results.Add(new PType(name: "Conventional", value: userResult.C));
+                _userResult.Results.Add(new PType(name: PTypeNames.R, value: userResult.R));
+                _userResult.Results.Add(new PType(name: PTypeNames.I, value: userResult.I));
+                _userResult.Results.Add(new PType(name: PTypeNames.A, value: userResult.A));
+                _userResult.Results.Add(new PType(name: PTypeNames.S, value: userResult.S));
+                _userResult.Results.Add(new PType(name: PTypeNames.E, value: userResult.E));
+                _userResult.Results.Add(new PType(name: PTypeNames.C, value: userResult.C));
 
                 ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
 
@@ -142,12 +143,12 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                     ur.Results = new List<PType>();
 
-                    ur.Results.Add(new PType(name: "Realistic", value: ur.R));
-                    ur.Results.Add(new PType(name: "Investigative", value: ur.I));
-                    ur.Results.Add(new PType(name: "Artistic", value: ur.A));
-                    ur.Results.Add(new PType(name: "Social", value: ur.S));
-                    ur.Results.Add(new PType(name: "Enterprising", value: ur.E));
-                    ur.Results.Add(new PType(name: "Conventional", value: ur.C));
+                    ur.Results.Add(new PType(name: PTypeNames.R, value: ur.R));
+                    ur.Results.Add(new PType(name: PTypeNames.I, value: ur.I));
+                    ur.Results.Add(new PType(name: PTypeNames.A, value: ur.A));
+                    ur.Results.Add(new PType(name: PTypeNames.S, value: ur.S));
+                    ur.Results.Add(new PType(name: PTypeNames.E, value: ur.E));
+                    ur.Results.Add(new PType(name: PTypeNames.C, value: ur.C));
                 }
 
                 ApiResponse<List<UserResultResponse>> response = new ApiResponse<List<UserResultResponse>>();
@@ -246,12 +247,12 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 _userResult.Results = new List<PType>();
 
-                _userResult.Results.Add(new PType(name: "Realistic", value: userResult.R));
-                _userResult.Results.Add(new PType(name: "Investigative", value: userResult.I));
-                _userResult.Results.Add(new PType(name: "Artistic", value: userResult.A));
-                _userResult.Results.Add(new PType(name: "Social", value: userResult.S));
-                _userResult.Results.Add(new PType(name: "Enterprising", value: userResult.E));
-                _userResult.Results.Add(new PType(name: "Conventional", value: userResult.C));
+                _userResult.Results.Add(new PType(name: PTypeNames.R, value: userResult.R));
+                _userResult.Results.Add(new PType(name: PTypeNames.I, value: userResult.I));
+                _userResult.Results.Add(new PType(name: PTypeNames.A, value: userResult.A));
+                _userResult.Results.Add(new PType(name: PTypeNames.S, value: userResult.S));
+                _userResult.Results.Add(new PType(name: PTypeNames.E, value: userResult.E));
+                _userResult.Results.Add(new PType(name: PTypeNames.C, value: userResult.C));
 
                 response.Data = _userResult;
 
@@ -310,12 +311,12 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 
                 _userResult.Results = new List<PType>();
 
-                _userResult.Results.Add(new PType(name: "Realistic", value: userResult.R));
-                _userResult.Results.Add(new PType(name: "Investigative", value: userResult.I));
-                _userResult.Results.Add(new PType(name: "Artistic", value: userResult.A));
-                _userResult.Results.Add(new PType(name: "Social", value: userResult.S));
-                _userResult.Results.Add(new PType(name: "Enterprising", value: userResult.E));
-                _userResult.Results.Add(new PType(name: "Conventional", value: userResult.C));
+                _userResult.Results.Add(new PType(name: PTypeNames.R, value: userResult.R));
+                _userResult.Results.Add(new PType(name: PTypeNames.I, value: userResult.I));
+                _userResult.Results.Add(new PType(name: PTypeNames.A, value: userResult.A));
+                _userResult.Results.Add(new PType(name: PTypeNames.S, value: userResult.S));
+                _userResult.Results.Add(new PType(name: PTypeNames.E, value: userResult.E));
+                _userResult.Results.Add(new PType(name: PTypeNames.C, value: userResult.C));
 
                 response.Data = _userResult;
 
@@ -379,12 +380,12 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 _userResult.Results = new List<PType>();
 
-                _userResult.Results.Add(new PType(name: "Realistic", value: userResult.R));
-                _userResult.Results.Add(new PType(name: "Investigative", value: userResult.I));
-                _userResult.Results.Add(new PType(name: "Artistic", value: userResult.A));
-                _userResult.Results.Add(new PType(name: "Social", value: userResult.S));
-                _userResult.Results.Add(new PType(name: "Enterprising", value: userResult.E));
-                _userResult.Results.Add(new PType(name: "Conventional", value: userResult.C));
+                _userResult.Results.Add(new PType(name: PTypeNames.R, value: userResult.R));
+                _userResult.Results.Add(new PType(name: PTypeNames.I, value: userResult.I));
+                _userResult.Results.Add(new PType(name: PTypeNames.A, value: userResult.A));
+                _userResult.Results.Add(new PType(name: PTypeNames.S, value: userResult.S));
+                _userResult.Results.Add(new PType(name: PTypeNames.E, value: userResult.E));
+                _userResult.Results.Add(new PType(name: PTypeNames.C, value: userResult.C));
 
                 response.Data = _userResult;
 

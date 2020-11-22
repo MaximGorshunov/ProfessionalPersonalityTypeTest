@@ -6,7 +6,8 @@ namespace Models
     public class Profession : IModel
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string NameEn { get; set; }
+        public string NameRu { get; set; }
         public ProfType ProfType { get; set; }
 
         public ICollection<Question> QuestionFirst { get; set; }

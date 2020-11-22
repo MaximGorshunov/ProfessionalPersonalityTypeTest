@@ -22,7 +22,7 @@
             <param name="model"></param>
             <returns>User + Token</returns>
         </member>
-        <member name="M:ProfessionalPersonalityTypeTest.Controllers.QuestionController.GetById(System.Int32)">
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.QuestionController.GetById(System.Int32,System.String)">
             <summary>
             Find question by identity key.
             All allowed.
@@ -30,7 +30,7 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:ProfessionalPersonalityTypeTest.Controllers.QuestionController.GetAll">
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.QuestionController.GetAll(System.String)">
             <summary>
             Get all questions.
             All allowed.

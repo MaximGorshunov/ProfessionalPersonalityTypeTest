@@ -28,10 +28,11 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         /// All allowed.
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="lang">en, ru</param>
         /// <returns></returns>
         [HttpGet("get")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById([FromHeader]int id, string lang)
         {
             try
             {
@@ -44,14 +45,36 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 ProfessionResponse professionGetFirst = new ProfessionResponse();
 
                 professionGetFirst.Id = professionFirst.Id;
-                professionGetFirst.Name = professionFirst.Name;
-                professionGetFirst.Type = professionFirst.ProfType.ToString();
+
+                switch (lang)
+                {
+                    case "en":
+                        professionGetFirst.Name = professionFirst.NameEn;
+                        break;
+                    case "ru":
+                        professionGetFirst.Name = professionFirst.NameRu;
+                        break;
+                    default:
+                        professionGetFirst.Name = professionFirst.NameEn;
+                        break;
+                }
 
                 ProfessionResponse professionGetSecond = new ProfessionResponse();
 
                 professionGetSecond.Id = professionSecond.Id;
-                professionGetSecond.Name = professionSecond.Name;
-                professionGetSecond.Type = professionSecond.ProfType.ToString();
+
+                switch (lang)
+                {
+                    case "en":
+                        professionGetSecond.Name = professionSecond.NameEn;
+                        break;
+                    case "ru":
+                        professionGetSecond.Name = professionSecond.NameRu;
+                        break;
+                    default:
+                        professionGetSecond.Name = professionSecond.NameEn;
+                        break;
+                }
 
                 QuestionResponse questionGet = new QuestionResponse();
 
@@ -79,10 +102,11 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         /// Get all questions.
         /// All allowed.
         /// </summary>
+        /// <param name="lang">en, ru</param>
         /// <returns></returns>
         [HttpGet("getAll")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromHeader] string lang)
         {
             try
             {
@@ -99,14 +123,36 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                     ProfessionResponse professionGetFirst = new ProfessionResponse();
 
                     professionGetFirst.Id = professionFirst.Id;
-                    professionGetFirst.Name = professionFirst.Name;
-                    professionGetFirst.Type = professionFirst.ProfType.ToString();
+
+                    switch (lang)
+                    {
+                        case "en":
+                            professionGetFirst.Name = professionFirst.NameEn;
+                            break;
+                        case "ru":
+                            professionGetFirst.Name = professionFirst.NameRu;
+                            break;
+                        default:
+                            professionGetFirst.Name = professionFirst.NameEn;
+                            break;
+                    }
 
                     ProfessionResponse professionGetSecond = new ProfessionResponse();
 
                     professionGetSecond.Id = professionSecond.Id;
-                    professionGetSecond.Name = professionSecond.Name;
-                    professionGetSecond.Type = professionSecond.ProfType.ToString();
+
+                    switch (lang)
+                    {
+                        case "en":
+                            professionGetSecond.Name = professionSecond.NameEn;
+                            break;
+                        case "ru":
+                            professionGetSecond.Name = professionSecond.NameRu;
+                            break;
+                        default:
+                            professionGetSecond.Name = professionSecond.NameEn;
+                            break;
+                    }
 
                     QuestionResponse questionGet = new QuestionResponse();
 
