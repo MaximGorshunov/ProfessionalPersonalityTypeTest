@@ -1,9 +1,9 @@
 ﻿namespace ProfessionalPersonalityTypeTest.Helpers
 {
-    public class PTypePowers
+    public enum PTypePowers
     {
-        public const string High = "High";
-        public const string Middle = "Middle";
-        public const string Low = "Low";
+        High = 1,
+        Middle = 2,
+        Low = 3
     }
 }

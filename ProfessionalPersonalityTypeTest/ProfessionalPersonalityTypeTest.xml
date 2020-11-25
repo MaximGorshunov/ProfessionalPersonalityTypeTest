@@ -28,6 +28,7 @@
             All allowed.
             </summary>
             <param name="id"></param>
+            <param name="lang">en, ru</param>
             <returns></returns>
         </member>
         <member name="M:ProfessionalPersonalityTypeTest.Controllers.QuestionController.GetAll(System.String)">
@@ -35,6 +36,7 @@
             Get all questions.
             All allowed.
             </summary>
+            <param name="lang">en, ru</param>
             <returns></returns>
         </member>
         <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserController.GetById(System.Int32)">
@@ -94,6 +96,14 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.Statistic(ProfessionalPersonalityTypeTest.Models.UserResultGetAllRequest)">
+            <summary>
+            Returns statistic.
+            Only admin is allowed.
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
         <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.Generate(System.Collections.Generic.List{System.Int32})">
             <summary>
             Generate new test result after completing.
@@ -114,8 +124,7 @@
         <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.Update(ProfessionalPersonalityTypeTest.Models.UserResultUpdate)">
             <summary>
             Update test's result.
-            Admin can update any test's result.
-            User can update only his own test's result.
+            Only admin is allowed
             </summary>
             <param name="userResultUpdate"></param>
             <returns></returns>
@@ -128,11 +137,6 @@
             </summary>
             <param name="id"></param>
             <returns></returns>
-        </member>
-        <member name="T:ProfessionalPersonalityTypeTest.Helpers.JwtMiddleware">
-            <summary>
-            Custom JWT Middleware
-            </summary>
         </member>
         <member name="P:ProfessionalPersonalityTypeTest.Models.AuthenticateRequest.Login">
             <summary>
@@ -344,11 +348,6 @@
         <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultUpdate.Id">
             <summary>
             Identity key
-            </summary>
-        </member>
-        <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultUpdate.UserId">
-            <summary>
-            User's identity key
             </summary>
         </member>
         <member name="P:ProfessionalPersonalityTypeTest.Models.UserResultUpdate.R">

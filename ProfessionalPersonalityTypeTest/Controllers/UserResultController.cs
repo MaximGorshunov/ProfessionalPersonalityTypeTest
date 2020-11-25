@@ -62,17 +62,16 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 _userResult.Id = userResult.Id;
                 _userResult.Date = userResult.Date;
-                _userResult.UserId = userResult.UserId;
                 _userResult.User = _user;
 
                 _userResult.Results = new List<PType>();
 
-                _userResult.Results.Add(new PType(name: PTypeNames.R, value: userResult.R));
-                _userResult.Results.Add(new PType(name: PTypeNames.I, value: userResult.I));
-                _userResult.Results.Add(new PType(name: PTypeNames.A, value: userResult.A));
-                _userResult.Results.Add(new PType(name: PTypeNames.S, value: userResult.S));
-                _userResult.Results.Add(new PType(name: PTypeNames.E, value: userResult.E));
-                _userResult.Results.Add(new PType(name: PTypeNames.C, value: userResult.C));
+                _userResult.Results.Add(new PType(name: PTypeNames.Realistic.ToString(), value: userResult.R, power: PTypePowerConvertor.Convert(userResult.R)));
+                _userResult.Results.Add(new PType(name: PTypeNames.Investigative.ToString(), value: userResult.I, power: PTypePowerConvertor.Convert(userResult.I)));
+                _userResult.Results.Add(new PType(name: PTypeNames.Artistic.ToString(), value: userResult.A, power: PTypePowerConvertor.Convert(userResult.A)));
+                _userResult.Results.Add(new PType(name: PTypeNames.Social.ToString(), value: userResult.S, power: PTypePowerConvertor.Convert(userResult.S)));
+                _userResult.Results.Add(new PType(name: PTypeNames.Enterprising.ToString(), value: userResult.E, power: PTypePowerConvertor.Convert(userResult.E)));
+                _userResult.Results.Add(new PType(name: PTypeNames.Conventional.ToString(), value: userResult.C, power: PTypePowerConvertor.Convert(userResult.C)));
 
                 ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
 
@@ -113,22 +112,26 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 userResults = await userResultService.GetByFilters(request.DataMin, request.DataMax, request.AgeMin, request.AgeMax, request.Gender, request.LoginFilter, request.Actual);
 
-                var _userResults = userResults.Select(u => new UserResultResponse
+                var _userResults = userResults.Select(u => (u.UserId, new UserResultResponse
                 {
                     Id = u.Id,
                     Date = u.Date,
-                    UserId = u.UserId,
-                    R = u.R,
-                    I = u.I,
-                    A = u.A,
-                    S = u.S,
-                    E = u.E,
-                    C = u.C
-                }).ToList();
+                    
+                    Results = new List<PType>()
+                    {
+                        new PType(name: PTypeNames.Realistic.ToString(), value: u.R, power: PTypePowerConvertor.Convert(u.R)),
+                        new PType(name: PTypeNames.Investigative.ToString(), value: u.I, power: PTypePowerConvertor.Convert(u.I)),
+                        new PType(name: PTypeNames.Artistic.ToString(), value: u.A, power: PTypePowerConvertor.Convert(u.A)),
+                        new PType(name: PTypeNames.Social.ToString(), value: u.S, power: PTypePowerConvertor.Convert(u.S)),
+                        new PType(name: PTypeNames.Enterprising.ToString(), value: u.E, power: PTypePowerConvertor.Convert(u.E)),
+                        new PType(name: PTypeNames.Conventional.ToString(), value: u.C, power: PTypePowerConvertor.Convert(u.C))
+                    }
 
-                foreach(var ur in _userResults)
+                })).ToList();
+
+                foreach(var (userId, ur) in _userResults)
                 {
-                    var user = await userService.GetById((int)ur.UserId);
+                    var user = await userService.GetById(userId);
 
                     UserResponse _user = new UserResponse();
 
@@ -140,20 +143,11 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                     _user.IsMan = user.IsMan;
 
                     ur.User = _user;
-
-                    ur.Results = new List<PType>();
-
-                    ur.Results.Add(new PType(name: PTypeNames.R, value: ur.R));
-                    ur.Results.Add(new PType(name: PTypeNames.I, value: ur.I));
-                    ur.Results.Add(new PType(name: PTypeNames.A, value: ur.A));
-                    ur.Results.Add(new PType(name: PTypeNames.S, value: ur.S));
-                    ur.Results.Add(new PType(name: PTypeNames.E, value: ur.E));
-                    ur.Results.Add(new PType(name: PTypeNames.C, value: ur.C));
                 }
 
                 ApiResponse<List<UserResultResponse>> response = new ApiResponse<List<UserResultResponse>>();
 
-                response.Data = _userResults;
+                response.Data = _userResults.Select(u => u.Item2).ToList();
 
                 return Json(response);
             }
@@ -161,6 +155,62 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             {
                 ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
                 response.ErrorMessage = $"Couldn't get user's results : {ex.Message}";
+                return Json(response);
+            }
+        }
+
+        /// <summary>
+        /// Returns statistic.
+        /// Only admin is allowed.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("statistic")]
+        [Authorize(Roles = Roles.Admin)]
+        public async Task<IActionResult> Statistic([FromBody] UserResultGetAllRequest request)
+        {
+            try
+            {
+                List<UserResult> userResults = new List<UserResult>();
+
+                userResults = await userResultService.GetByFilters(request.DataMin, request.DataMax, request.AgeMin, request.AgeMax, request.Gender, request.LoginFilter, request.Actual);
+
+                UserResultStatistic statistic = new UserResultStatistic();
+                statistic.High = new Statistic();
+                statistic.Middle = new Statistic();
+                statistic.Low = new Statistic();
+
+                statistic.High.Realistic = Math.Round(((double) userResults.Count(x => PTypePowerConvertor.Convert(x.R) == PTypePowers.High.ToString()) / userResults.Count() * 100), 1);
+                statistic.High.Investigative = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.I) == PTypePowers.High.ToString()) / userResults.Count() * 100), 1);
+                statistic.High.Artistic = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.A) == PTypePowers.High.ToString()) / userResults.Count() * 100), 1);
+                statistic.High.Social = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.S) == PTypePowers.High.ToString()) / userResults.Count() * 100), 1);
+                statistic.High.Enterprising = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.E) == PTypePowers.High.ToString()) / userResults.Count() * 100), 1);
+                statistic.High.Conventional = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.C) == PTypePowers.High.ToString()) / userResults.Count() * 100), 1);
+
+                statistic.Middle.Realistic = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.R) == PTypePowers.Middle.ToString()) / userResults.Count() * 100), 1);
+                statistic.Middle.Investigative = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.I) == PTypePowers.Middle.ToString()) / userResults.Count() * 100), 1);
+                statistic.Middle.Artistic = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.A) == PTypePowers.Middle.ToString()) / userResults.Count() * 100), 1);
+                statistic.Middle.Social = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.S) == PTypePowers.Middle.ToString()) / userResults.Count() * 100), 1);
+                statistic.Middle.Enterprising = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.E) == PTypePowers.Middle.ToString()) / userResults.Count() * 100), 1);
+                statistic.Middle.Conventional = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.C) == PTypePowers.Middle.ToString()) / userResults.Count() * 100), 1);
+
+                statistic.Low.Realistic = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.R) == PTypePowers.Low.ToString()) / userResults.Count() * 100), 1);
+                statistic.Low.Investigative = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.I) == PTypePowers.Low.ToString()) / userResults.Count() * 100), 1);
+                statistic.Low.Artistic = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.A) == PTypePowers.Low.ToString()) / userResults.Count() * 100), 1);
+                statistic.Low.Social = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.S) == PTypePowers.Low.ToString()) / userResults.Count() * 100), 1);
+                statistic.Low.Enterprising = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.E) == PTypePowers.Low.ToString()) / userResults.Count() * 100), 1);
+                statistic.Low.Conventional = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.C) == PTypePowers.Low.ToString()) / userResults.Count() * 100), 1);
+
+                ApiResponse<UserResultStatistic> response = new ApiResponse<UserResultStatistic>();
+
+                response.Data = statistic;
+
+                return Json(response);
+            }
+            catch(Exception ex)
+            {
+                ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
+                response.ErrorMessage = $"Couldn't get statistic : {ex.Message}";
                 return Json(response);
             }
         }
@@ -240,19 +290,19 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                     _user.IsMan = user.IsMan;
 
                     _userResult.Id = userResult.Id;
-                    _userResult.UserId = userResult.UserId;
                     _userResult.User = _user;
                 }
+                
                 _userResult.Date = userResult.Date;
 
                 _userResult.Results = new List<PType>();
 
-                _userResult.Results.Add(new PType(name: PTypeNames.R, value: userResult.R));
-                _userResult.Results.Add(new PType(name: PTypeNames.I, value: userResult.I));
-                _userResult.Results.Add(new PType(name: PTypeNames.A, value: userResult.A));
-                _userResult.Results.Add(new PType(name: PTypeNames.S, value: userResult.S));
-                _userResult.Results.Add(new PType(name: PTypeNames.E, value: userResult.E));
-                _userResult.Results.Add(new PType(name: PTypeNames.C, value: userResult.C));
+                _userResult.Results.Add(new PType(name: PTypeNames.Realistic.ToString(), value: userResult.R, power: PTypePowerConvertor.Convert(userResult.R)));
+                _userResult.Results.Add(new PType(name: PTypeNames.Investigative.ToString(), value: userResult.I, power: PTypePowerConvertor.Convert(userResult.I)));
+                _userResult.Results.Add(new PType(name: PTypeNames.Artistic.ToString(), value: userResult.A, power: PTypePowerConvertor.Convert(userResult.A)));
+                _userResult.Results.Add(new PType(name: PTypeNames.Social.ToString(), value: userResult.S, power: PTypePowerConvertor.Convert(userResult.S)));
+                _userResult.Results.Add(new PType(name: PTypeNames.Enterprising.ToString(), value: userResult.E, power: PTypePowerConvertor.Convert(userResult.E)));
+                _userResult.Results.Add(new PType(name: PTypeNames.Conventional.ToString(), value: userResult.C, power: PTypePowerConvertor.Convert(userResult.C)));
 
                 response.Data = _userResult;
 
@@ -305,18 +355,17 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 UserResultResponse _userResult = new UserResultResponse();
                 
                 _userResult.Id = userResult.Id;
-                _userResult.UserId = userResult.UserId;
                 _userResult.User = _user;
                 _userResult.Date = userResult.Date;
                 
                 _userResult.Results = new List<PType>();
 
-                _userResult.Results.Add(new PType(name: PTypeNames.R, value: userResult.R));
-                _userResult.Results.Add(new PType(name: PTypeNames.I, value: userResult.I));
-                _userResult.Results.Add(new PType(name: PTypeNames.A, value: userResult.A));
-                _userResult.Results.Add(new PType(name: PTypeNames.S, value: userResult.S));
-                _userResult.Results.Add(new PType(name: PTypeNames.E, value: userResult.E));
-                _userResult.Results.Add(new PType(name: PTypeNames.C, value: userResult.C));
+                _userResult.Results.Add(new PType(name: PTypeNames.Realistic.ToString(), value: userResult.R, power: PTypePowerConvertor.Convert(userResult.R)));
+                _userResult.Results.Add(new PType(name: PTypeNames.Investigative.ToString(), value: userResult.I, power: PTypePowerConvertor.Convert(userResult.I)));
+                _userResult.Results.Add(new PType(name: PTypeNames.Artistic.ToString(), value: userResult.A, power: PTypePowerConvertor.Convert(userResult.A)));
+                _userResult.Results.Add(new PType(name: PTypeNames.Social.ToString(), value: userResult.S, power: PTypePowerConvertor.Convert(userResult.S)));
+                _userResult.Results.Add(new PType(name: PTypeNames.Enterprising.ToString(), value: userResult.E, power: PTypePowerConvertor.Convert(userResult.E)));
+                _userResult.Results.Add(new PType(name: PTypeNames.Conventional.ToString(), value: userResult.C, power: PTypePowerConvertor.Convert(userResult.C)));
 
                 response.Data = _userResult;
 
@@ -332,23 +381,18 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
         /// <summary>
         /// Update test's result.
-        /// Admin can update any test's result.
-        /// User can update only his own test's result.
+        /// Only admin is allowed
         /// </summary>
         /// <param name="userResultUpdate"></param>
         /// <returns></returns>
         [HttpPost("update")]
-        [Authorize]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Update([FromBody] UserResultUpdate userResultUpdate)
         {
             try
             {
                 if (!ModelState.IsValid)
                         return BadRequest();
-
-                var currentUserId = int.Parse(User.Identity.Name);
-                if (userResultUpdate.UserId != currentUserId && !User.IsInRole(Roles.Admin))
-                    return Forbid();
 
                 var userResult = await userResultService.Update(userResultUpdate.Id,
                                                         userResultUpdate.R, userResultUpdate.I, userResultUpdate.A, userResultUpdate.S, userResultUpdate.E, userResultUpdate.C);
@@ -374,18 +418,17 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 UserResultResponse _userResult = new UserResultResponse();
 
                 _userResult.Id = userResult.Id;
-                _userResult.UserId = userResult.UserId;
                 _userResult.User = _user;
                 _userResult.Date = userResult.Date;
 
                 _userResult.Results = new List<PType>();
 
-                _userResult.Results.Add(new PType(name: PTypeNames.R, value: userResult.R));
-                _userResult.Results.Add(new PType(name: PTypeNames.I, value: userResult.I));
-                _userResult.Results.Add(new PType(name: PTypeNames.A, value: userResult.A));
-                _userResult.Results.Add(new PType(name: PTypeNames.S, value: userResult.S));
-                _userResult.Results.Add(new PType(name: PTypeNames.E, value: userResult.E));
-                _userResult.Results.Add(new PType(name: PTypeNames.C, value: userResult.C));
+                _userResult.Results.Add(new PType(name: PTypeNames.Realistic.ToString(), value: userResult.R, power: PTypePowerConvertor.Convert(userResult.R)));
+                _userResult.Results.Add(new PType(name: PTypeNames.Investigative.ToString(), value: userResult.I, power: PTypePowerConvertor.Convert(userResult.I)));
+                _userResult.Results.Add(new PType(name: PTypeNames.Artistic.ToString(), value: userResult.A, power: PTypePowerConvertor.Convert(userResult.A)));
+                _userResult.Results.Add(new PType(name: PTypeNames.Social.ToString(), value: userResult.S, power: PTypePowerConvertor.Convert(userResult.S)));
+                _userResult.Results.Add(new PType(name: PTypeNames.Enterprising.ToString(), value: userResult.E, power: PTypePowerConvertor.Convert(userResult.E)));
+                _userResult.Results.Add(new PType(name: PTypeNames.Conventional.ToString(), value: userResult.C, power: PTypePowerConvertor.Convert(userResult.C)));
 
                 response.Data = _userResult;
 

@@ -1,12 +1,12 @@
 ﻿namespace ProfessionalPersonalityTypeTest.Helpers
 {
-    public class PTypeNames
+    public enum PTypeNames
     {
-        public const string R = "Realistic";
-        public const string I = "Investigative";
-        public const string A = "Artistic";
-        public const string S = "Social";
-        public const string E = "Enterprising";
-        public const string C = "Conventional";
+        Realistic = 1,
+        Investigative = 2,
+        Artistic = 3,
+        Social = 4,
+        Enterprising = 5,
+        Conventional = 6
     }
 }

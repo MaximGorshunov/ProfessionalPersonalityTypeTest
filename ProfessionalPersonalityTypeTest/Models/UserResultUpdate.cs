@@ -13,11 +13,6 @@ namespace ProfessionalPersonalityTypeTest.Models
         [Required]
         public int Id { get; set; }
         /// <summary>
-        /// User's identity key
-        /// </summary>
-        [Required]
-        public int UserId { get; set; }
-        /// <summary>
         /// Realistic type
         /// Сontains the sum of the selected professions of the given type
         /// </summary>
