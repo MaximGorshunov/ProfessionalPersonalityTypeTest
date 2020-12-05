@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace ProfessionalPersonalityTypeTest.Models
+﻿namespace ProfessionalPersonalityTypeTest.Models
 {
     public class ApiResponse<T>
     {

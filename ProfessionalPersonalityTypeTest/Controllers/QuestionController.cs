@@ -5,7 +5,6 @@ using Service.IServices;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ProfessionalPersonalityTypeTest.Controllers
@@ -90,10 +89,10 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 return Json(response);
             }
-            catch (Exception ex)
+            catch
             {
                 ApiResponse<QuestionResponse> response = new ApiResponse<QuestionResponse>();
-                response.ErrorMessage = $"Couldn't get question {ex.Message}";
+                response.ErrorMessage = "Couldn't get question";
                 return Json(response);
             }
         }
@@ -171,10 +170,10 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 return Json(responce);
             }
-            catch (Exception ex) 
+            catch
             {
                 ApiResponse<QuestionResponse> response = new ApiResponse<QuestionResponse>();
-                response.ErrorMessage = $"Couldn't get questions  : {ex.Message}";
+                response.ErrorMessage = "Couldn't get questions";
                 return Json(response);
             }
         }

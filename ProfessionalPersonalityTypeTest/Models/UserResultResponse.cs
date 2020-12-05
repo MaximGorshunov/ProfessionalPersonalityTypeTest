@@ -1,7 +1,6 @@
 ﻿using ProfessionalPersonalityTypeTest.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace ProfessionalPersonalityTypeTest.Models
 {

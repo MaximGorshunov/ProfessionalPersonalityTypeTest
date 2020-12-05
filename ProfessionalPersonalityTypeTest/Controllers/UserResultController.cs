@@ -79,10 +79,10 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 return Json(response);
             }
-            catch (Exception ex)
+            catch
             {
                 ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
-                response.ErrorMessage = $"Couldn't get user's result {ex.Message}";
+                response.ErrorMessage = "Couldn't get user's result";
                 return Json(response);
             }
         }
@@ -151,10 +151,10 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 return Json(response);
             }
-            catch (Exception ex)
+            catch
             {
                 ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
-                response.ErrorMessage = $"Couldn't get user's results : {ex.Message}";
+                response.ErrorMessage = "Couldn't get user's results";
                 return Json(response);
             }
         }
@@ -207,10 +207,10 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 return Json(response);
             }
-            catch(Exception ex)
+            catch
             {
                 ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
-                response.ErrorMessage = $"Couldn't get statistic : {ex.Message}";
+                response.ErrorMessage = "Couldn't get statistic";
                 return Json(response);
             }
         }
@@ -308,10 +308,10 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 return Json(response);
             }
-            catch (Exception ex)
+            catch
             {
                 ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
-                response.ErrorMessage = $"Couldn't generate result : {ex.Message}";
+                response.ErrorMessage = "Couldn't generate result";
                 return Json(response);
             }
         }
@@ -371,10 +371,10 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 return Json(response);
             }
-            catch (Exception ex)
+            catch
             {
                 ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
-                response.ErrorMessage = $"Couldn't create user's result : {ex.Message}";
+                response.ErrorMessage = "Couldn't create user's result";
                 return Json(response);
             }
         }
@@ -434,10 +434,10 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 return Json(response);
             }
-            catch (Exception ex)
+            catch
             {
                 ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
-                response.ErrorMessage = $"Couldn't update user's result : {ex.Message}";
+                response.ErrorMessage = "Couldn't update user's result";
                 return Json(response);
             }
         }
@@ -464,10 +464,10 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 response.Data = await userResultService.Delete(id);
                 return Json(response);
             }
-            catch (Exception ex)
+            catch
             {
                 ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
-                response.ErrorMessage = $"Couldn't delete user's result : {ex.Message}";
+                response.ErrorMessage = "Couldn't delete user's result";
                 return Json(response);
             }
         }

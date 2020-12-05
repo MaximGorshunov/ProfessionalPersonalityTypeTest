@@ -54,10 +54,10 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 
                 return Json(response);
             }
-            catch(Exception ex)
+            catch
             {
                 ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
-                response.ErrorMessage = $"Couldn't get user : {ex.Message}";
+                response.ErrorMessage = $"Couldn't get user";
                 return Json(response);
             }
         }
@@ -88,10 +88,10 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 
                 return Json(response);
             }
-            catch (Exception ex)
+            catch
             {
                 ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
-                response.ErrorMessage = $"Couldn't get users  : {ex.Message}";
+                response.ErrorMessage = $"Couldn't get users";
                 return Json(response);
             }
         }
@@ -134,10 +134,10 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 return Json(response);
             }
-            catch (Exception ex)
+            catch
             {
                 ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
-                response.ErrorMessage = $"Couldn't create user : {ex.Message}";
+                response.ErrorMessage = $"Couldn't create user";
                 return Json(response);
             }
         }
@@ -185,10 +185,10 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 return Json(response);
             }
-            catch (Exception ex)
+            catch
             {
                 ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
-                response.ErrorMessage = $"Couldn't update user : {ex.Message}";
+                response.ErrorMessage = $"Couldn't update user";
                 return Json(response);
             }
         }
@@ -209,10 +209,10 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 response.Data = await userService.Delete(id);
                 return Json(response);
             }
-            catch (Exception ex)
+            catch
             {
                 ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
-                response.ErrorMessage = $"Couldn't delete user : {ex.Message}";
+                response.ErrorMessage = $"Couldn't delete user";
                 return Json(response);
             }
         }

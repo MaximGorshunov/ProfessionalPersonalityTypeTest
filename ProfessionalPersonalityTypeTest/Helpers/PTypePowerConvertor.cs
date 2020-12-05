@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ProfessionalPersonalityTypeTest.Helpers
+﻿namespace ProfessionalPersonalityTypeTest.Helpers
 {
-    public class PTypePowerConvertor
+    public static class PTypePowerConvertor
     {
         private const int LowFrom = 2;
         private const int LowTo = 4;
