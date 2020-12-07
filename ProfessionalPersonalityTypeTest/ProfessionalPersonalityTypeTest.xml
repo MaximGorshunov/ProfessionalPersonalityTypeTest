@@ -99,7 +99,8 @@
         <member name="M:ProfessionalPersonalityTypeTest.Controllers.UserResultController.Statistic(ProfessionalPersonalityTypeTest.Models.UserResultGetAllRequest)">
             <summary>
             Returns statistic.
-            Only admin is allowed.
+            Admin gets all statistic.
+            User gets his own statistic.
             </summary>
             <param name="request"></param>
             <returns></returns>

@@ -98,6 +98,9 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                    return BadRequest();
+
                 if (!User.IsInRole(Roles.Admin)) 
                 {
                     var currentUserId = int.Parse(User.Identity.Name);
@@ -109,8 +112,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 }
 
                 List<UserResult> userResults = new List<UserResult>();
+                ApiResponse<List<UserResultResponse>> response = new ApiResponse<List<UserResultResponse>>();
 
                 userResults = await userResultService.GetByFilters(request.DataMin, request.DataMax, request.AgeMin, request.AgeMax, request.Gender, request.LoginFilter, request.Actual);
+
+                if (!userResults.Any())
+                {
+                    response.ErrorMessage = "Results not found.";
+                    return Json(response);
+                }
 
                 var _userResults = userResults.Select(u => (u.UserId, new UserResultResponse
                 {
@@ -145,8 +155,6 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                     ur.User = _user;
                 }
 
-                ApiResponse<List<UserResultResponse>> response = new ApiResponse<List<UserResultResponse>>();
-
                 response.Data = _userResults.Select(u => u.Item2).ToList();
 
                 return Json(response);
@@ -161,19 +169,40 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
         /// <summary>
         /// Returns statistic.
-        /// Only admin is allowed.
+        /// Admin gets all statistic.
+        /// User gets his own statistic.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("statistic")]
-        [Authorize(Roles = Roles.Admin)]
+        [Authorize]
         public async Task<IActionResult> Statistic([FromBody] UserResultGetAllRequest request)
         {
             try
             {
+                if (!ModelState.IsValid)
+                    return BadRequest();
+
+                if (!User.IsInRole(Roles.Admin))
+                {
+                    var currentUserId = int.Parse(User.Identity.Name);
+                    var user = await userService.GetById(currentUserId);
+                    request.LoginFilter = user.Login;
+                    request.Gender = null;
+                    request.AgeMin = null;
+                    request.AgeMax = null;
+                }
+
                 List<UserResult> userResults = new List<UserResult>();
+                ApiResponse<UserResultStatistic> response = new ApiResponse<UserResultStatistic>();
 
                 userResults = await userResultService.GetByFilters(request.DataMin, request.DataMax, request.AgeMin, request.AgeMax, request.Gender, request.LoginFilter, request.Actual);
+
+                if (!userResults.Any())
+                {
+                    response.ErrorMessage = "Results not found.";
+                    return Json(response);
+                }
 
                 UserResultStatistic statistic = new UserResultStatistic();
                 statistic.High = new Statistic();
@@ -200,8 +229,6 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 statistic.Low.Social = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.S) == PTypePowers.Low.ToString()) / userResults.Count() * 100), 1);
                 statistic.Low.Enterprising = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.E) == PTypePowers.Low.ToString()) / userResults.Count() * 100), 1);
                 statistic.Low.Conventional = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.C) == PTypePowers.Low.ToString()) / userResults.Count() * 100), 1);
-
-                ApiResponse<UserResultStatistic> response = new ApiResponse<UserResultStatistic>();
 
                 response.Data = statistic;
 
