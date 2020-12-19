@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProfessionalPersonalityTypeTest.Models
 {
@@ -7,6 +8,13 @@ namespace ProfessionalPersonalityTypeTest.Models
     /// </summary>
     public class UserResultCreate
     {
+        private int r;
+        private int i;
+        private int a;
+        private int s;
+        private int e;
+        private int c;
+
         /// <summary>
         /// User's id 
         /// </summary>
@@ -17,36 +25,108 @@ namespace ProfessionalPersonalityTypeTest.Models
         /// Сontains the sum of the selected professions of the given type
         /// </summary>
         [Required]
-        public int R { get; set; }
+        public int R
+        {
+            get
+            {
+                return r;
+            }
+            set
+            {
+                if (value > 10 || value < 0)
+                    throw new ArgumentException("Value cannot be more then 10 or less then 0", nameof(value));
+                r = value;
+            }
+        }
         /// <summary>
         /// Investigative type
         /// Сontains the sum of the selected professions of the given type
         /// </summary>
         [Required]
-        public int I { get; set; }
+        public int I
+        {
+            get
+            {
+                return i;
+            }
+            set
+            {
+                if (value > 10 || value < 0)
+                    throw new ArgumentException("Value cannot be more then 10 or less then 0", nameof(value));
+                i = value;
+            }
+        }
         /// <summary>
         /// Artistic type
         /// Сontains the sum of the selected professions of the given type
         /// </summary>
         [Required]
-        public int A { get; set; }
+        public int A
+        {
+            get
+            {
+                return a;
+            }
+            set
+            {
+                if (value > 10 || value < 0)
+                    throw new ArgumentException("Value cannot be more then 10 or less then 0", nameof(value));
+                a = value;
+            }
+        }
         /// <summary>
         /// Social type
         /// Сontains the sum of the selected professions of the given type
         /// </summary>
         [Required]
-        public int S { get; set; }
+        public int S
+        {
+            get
+            {
+                return s;
+            }
+            set
+            {
+                if (value > 10 || value < 0)
+                    throw new ArgumentException("Value cannot be more then 10 or less then 0", nameof(value));
+                s = value;
+            }
+        }
         /// <summary>
         /// Enterprising type
         /// Сontains the sum of the selected professions of the given type
         /// </summary>
         [Required]
-        public int E { get; set; }
+        public int E
+        {
+            get
+            {
+                return e;
+            }
+            set
+            {
+                if (value > 10 || value < 0)
+                    throw new ArgumentException("Value cannot be more then 10 or less then 0", nameof(value));
+                e = value;
+            }
+        }
         /// <summary>
         /// Conventional type
         /// Сontains the sum of the selected professions of the given type
         /// </summary>
         [Required]
-        public int C { get; set; }
+        public int C
+        {
+            get
+            {
+                return c;
+            }
+            set
+            {
+                if (value > 10 || value < 0)
+                    throw new ArgumentException("Value cannot be more then 10 or less then 0", nameof(value));
+                c = value;
+            }
+        }
     }
 }

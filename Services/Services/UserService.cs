@@ -75,7 +75,7 @@ namespace Service.Services
             return newUser = null;
         }
 
-        public async Task<User> Update(int id, bool isAdmin, string login, string email, DateTime birthdate, bool isMan, string password)
+        public async Task<User> Update(int id, bool? isAdmin, string login, string email, DateTime? birthdate, bool? isMan, string password)
         {
             User updatedUser = await userRepository.GetById(id);
             var loginCheck = false;
@@ -95,16 +95,20 @@ namespace Service.Services
                                        .AnyAsync();
             }
 
-            if (!loginCheck && !emailCheck && updatedUser != null)
+            if(!loginCheck && !emailCheck && updatedUser != null)
             {
-
-                updatedUser.Id = id;
-                updatedUser.IsAdmin = isAdmin;
-                updatedUser.Login = login;
-                updatedUser.Email = email;
-                updatedUser.IsMan = isMan;
-                updatedUser.Birthdate = birthdate;
-                updatedUser.Password = password;
+                if(isAdmin != null)
+                    updatedUser.IsAdmin = (bool)isAdmin;
+                if(login != null)
+                    updatedUser.Login = login;
+                if(email != null)
+                    updatedUser.Email = email;
+                if(isMan != null)
+                    updatedUser.IsMan = (bool)isMan;
+                if(birthdate != null)
+                    updatedUser.Birthdate = (DateTime)birthdate;
+                if(password != null)
+                    updatedUser.Password = password;
 
                 updatedUser = await userRepository.UpdateUser(updatedUser);
 

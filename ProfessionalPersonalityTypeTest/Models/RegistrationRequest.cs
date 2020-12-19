@@ -21,7 +21,7 @@ namespace ProfessionalPersonalityTypeTest.Models
         /// </summary>
         [Required]
         [RegularExpression(@"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}")]
-        [StringLength(60, MinimumLength = 6)]
+        [StringLength(60)]
         public string Email { get; set; }
 
         /// <summary>

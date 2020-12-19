@@ -38,8 +38,25 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 ApiResponse<QuestionResponse> response = new ApiResponse<QuestionResponse>();
 
                 var question = await questionService.GetById(id);
+
+                if(question == null)
+                {
+                    HttpContext.Response.StatusCode = 404;
+                    response.Status = HttpContext.Response.StatusCode;
+                    response.ErrorMessage = "Wrong question identity key.";
+                    return Json(response);
+                }
+
                 var professionFirst = await professionService.GetById(question.ProfessionIdFirst);
                 var professionSecond = await professionService.GetById(question.ProfessionIdSecond);
+
+                if (professionFirst == null || professionSecond == null)
+                {
+                    HttpContext.Response.StatusCode = 409;
+                    response.Status = HttpContext.Response.StatusCode;
+                    response.ErrorMessage = "Some problem with getting question info.";
+                    return Json(response);
+                }
 
                 ProfessionResponse professionGetFirst = new ProfessionResponse();
 
@@ -84,7 +101,9 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 questionGet.professions.Add(professionGetFirst);
                 questionGet.professions.Add(professionGetSecond);
-
+                
+                HttpContext.Response.StatusCode = 200;
+                response.Status = HttpContext.Response.StatusCode;
                 response.Data = questionGet;
 
                 return Json(response);
@@ -92,6 +111,8 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch
             {
                 ApiResponse<QuestionResponse> response = new ApiResponse<QuestionResponse>();
+                HttpContext.Response.StatusCode = 409;
+                response.Status = HttpContext.Response.StatusCode;
                 response.ErrorMessage = "Couldn't get question";
                 return Json(response);
             }
@@ -109,7 +130,7 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
-                ApiResponse<List<QuestionResponse>> responce = new ApiResponse<List<QuestionResponse>>();
+                ApiResponse<List<QuestionResponse>> response = new ApiResponse<List<QuestionResponse>>();
                 List<QuestionResponse> questions = new List<QuestionResponse>();
                 
                 var _questions = await questionService.GetAll();
@@ -118,6 +139,14 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 {
                     var professionFirst = await professionService.GetById(q.ProfessionIdFirst);
                     var professionSecond = await professionService.GetById(q.ProfessionIdSecond);
+
+                    if (professionFirst == null || professionSecond == null)
+                    {
+                        HttpContext.Response.StatusCode = 409;
+                        response.Status = HttpContext.Response.StatusCode;
+                        response.ErrorMessage = $"Some problem with getting question info. Question id = {q.Id}";
+                        return Json(response);
+                    }
 
                     ProfessionResponse professionGetFirst = new ProfessionResponse();
 
@@ -166,13 +195,17 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                     questions.Add(questionGet);
                 }
 
-                responce.Data = questions;
+                HttpContext.Response.StatusCode = 200;
+                response.Status = HttpContext.Response.StatusCode;
+                response.Data = questions;
 
-                return Json(responce);
+                return Json(response);
             }
             catch
             {
                 ApiResponse<QuestionResponse> response = new ApiResponse<QuestionResponse>();
+                HttpContext.Response.StatusCode = 409;
+                response.Status = HttpContext.Response.StatusCode;
                 response.ErrorMessage = "Couldn't get questions";
                 return Json(response);
             }

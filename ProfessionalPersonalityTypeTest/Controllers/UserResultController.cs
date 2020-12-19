@@ -41,22 +41,41 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
+                ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
+
                 var userResult = await userResultService.GetById(id);
 
+                if (userResult == null)
+                {
+                    HttpContext.Response.StatusCode = 404;
+                    response.Status = HttpContext.Response.StatusCode;
+                    response.ErrorMessage = "Wrong identity key.";
+                    return Json(response);
+                }
+
                 var currentUserId = int.Parse(User.Identity.Name);
+
                 if (userResult.UserId != currentUserId && !User.IsInRole(Roles.Admin))
-                    return Forbid();
+                {
+                    HttpContext.Response.StatusCode = 403;
+                    response.Status = HttpContext.Response.StatusCode;
+                    response.ErrorMessage = $"You do not have permission to get result with id {id}.";
+                    return Json(response);
+                }
 
                 var user = await userService.GetById(userResult.UserId);
 
                 UserResponse _user = new UserResponse();
 
-                _user.Id = user.Id;
-                _user.IsAdmin = user.IsAdmin;
-                _user.Login = user.Login;
-                _user.Email = user.Email;
-                _user.Birthdate = user.Birthdate;
-                _user.IsMan = user.IsMan;
+                if(user != null)
+                {
+                    _user.Id = user.Id;
+                    _user.IsAdmin = user.IsAdmin;
+                    _user.Login = user.Login;
+                    _user.Email = user.Email;
+                    _user.Birthdate = user.Birthdate;
+                    _user.IsMan = user.IsMan;
+                }
 
                 UserResultResponse _userResult = new UserResultResponse();
 
@@ -73,8 +92,8 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 _userResult.Results.Add(new PType(name: PTypeNames.Enterprising.ToString(), value: userResult.E, power: PTypePowerConvertor.Convert(userResult.E)));
                 _userResult.Results.Add(new PType(name: PTypeNames.Conventional.ToString(), value: userResult.C, power: PTypePowerConvertor.Convert(userResult.C)));
 
-                ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
-
+                HttpContext.Response.StatusCode = 200;
+                response.Status = HttpContext.Response.StatusCode;
                 response.Data = _userResult;
 
                 return Json(response);
@@ -82,6 +101,8 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch
             {
                 ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
+                HttpContext.Response.StatusCode = 409;
+                response.Status = HttpContext.Response.StatusCode;
                 response.ErrorMessage = "Couldn't get user's result";
                 return Json(response);
             }
@@ -98,10 +119,17 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
-                    return BadRequest();
+                ApiResponse<List<UserResultResponse>> response = new ApiResponse<List<UserResultResponse>>();
 
-                if (!User.IsInRole(Roles.Admin)) 
+                if (!ModelState.IsValid)
+                {
+                    HttpContext.Response.StatusCode = 400;
+                    response.Status = HttpContext.Response.StatusCode;
+                    response.ErrorMessage = "Invalid request model.";
+                    return Json(response);
+                }
+
+                if (!User.IsInRole(Roles.Admin))
                 {
                     var currentUserId = int.Parse(User.Identity.Name);
                     var user = await userService.GetById(currentUserId);
@@ -112,12 +140,13 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 }
 
                 List<UserResult> userResults = new List<UserResult>();
-                ApiResponse<List<UserResultResponse>> response = new ApiResponse<List<UserResultResponse>>();
 
                 userResults = await userResultService.GetByFilters(request.DataMin, request.DataMax, request.AgeMin, request.AgeMax, request.Gender, request.LoginFilter, request.Actual);
 
                 if (!userResults.Any())
                 {
+                    HttpContext.Response.StatusCode = 404;
+                    response.Status = HttpContext.Response.StatusCode;
                     response.ErrorMessage = "Results not found.";
                     return Json(response);
                 }
@@ -145,16 +174,21 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                     UserResponse _user = new UserResponse();
 
-                    _user.Id = user.Id;
-                    _user.IsAdmin = user.IsAdmin;
-                    _user.Login = user.Login;
-                    _user.Email = user.Email;
-                    _user.Birthdate = user.Birthdate;
-                    _user.IsMan = user.IsMan;
+                    if(user != null)
+                    {
+                        _user.Id = user.Id;
+                        _user.IsAdmin = user.IsAdmin;
+                        _user.Login = user.Login;
+                        _user.Email = user.Email;
+                        _user.Birthdate = user.Birthdate;
+                        _user.IsMan = user.IsMan;
+                    }
 
                     ur.User = _user;
                 }
 
+                HttpContext.Response.StatusCode = 200;
+                response.Status = HttpContext.Response.StatusCode;
                 response.Data = _userResults.Select(u => u.Item2).ToList();
 
                 return Json(response);
@@ -162,6 +196,8 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch
             {
                 ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
+                HttpContext.Response.StatusCode = 409;
+                response.Status = HttpContext.Response.StatusCode;
                 response.ErrorMessage = "Couldn't get user's results";
                 return Json(response);
             }
@@ -180,8 +216,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
+                ApiResponse<UserResultStatistic> response = new ApiResponse<UserResultStatistic>();
+
                 if (!ModelState.IsValid)
-                    return BadRequest();
+                {
+                    HttpContext.Response.StatusCode = 400;
+                    response.Status = HttpContext.Response.StatusCode;
+                    response.ErrorMessage = "Invalid request model.";
+                    return Json(response);
+                }
 
                 if (!User.IsInRole(Roles.Admin))
                 {
@@ -194,12 +237,13 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 }
 
                 List<UserResult> userResults = new List<UserResult>();
-                ApiResponse<UserResultStatistic> response = new ApiResponse<UserResultStatistic>();
 
                 userResults = await userResultService.GetByFilters(request.DataMin, request.DataMax, request.AgeMin, request.AgeMax, request.Gender, request.LoginFilter, request.Actual);
 
                 if (!userResults.Any())
                 {
+                    HttpContext.Response.StatusCode = 404;
+                    response.Status = HttpContext.Response.StatusCode;
                     response.ErrorMessage = "Results not found.";
                     return Json(response);
                 }
@@ -230,6 +274,8 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 statistic.Low.Enterprising = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.E) == PTypePowers.Low.ToString()) / userResults.Count() * 100), 1);
                 statistic.Low.Conventional = Math.Round(((double)userResults.Count(x => PTypePowerConvertor.Convert(x.C) == PTypePowers.Low.ToString()) / userResults.Count() * 100), 1);
 
+                HttpContext.Response.StatusCode = 200;
+                response.Status = HttpContext.Response.StatusCode;
                 response.Data = statistic;
 
                 return Json(response);
@@ -237,6 +283,8 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch
             {
                 ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
+                HttpContext.Response.StatusCode = 409;
+                response.Status = HttpContext.Response.StatusCode;
                 response.ErrorMessage = "Couldn't get statistic";
                 return Json(response);
             }
@@ -261,12 +309,16 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 if(answers.Count() != questions.Count())
                 {
+                    HttpContext.Response.StatusCode = 400;
+                    response.Status = HttpContext.Response.StatusCode;
                     response.ErrorMessage = "Not all questions are answered";
                     return Json(response);
                 }
 
                 if(answers.Distinct().Count() != answers.Count())
                 {
+                    HttpContext.Response.StatusCode = 400;
+                    response.Status = HttpContext.Response.StatusCode;
                     response.ErrorMessage = "Some answers repeated";
                     return Json(response);
                 }
@@ -279,7 +331,9 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                     if (p == null)
                     {
-                        response.ErrorMessage = "Answer with id " + a.ToString() + " not found";
+                        HttpContext.Response.StatusCode = 400;
+                        response.Status = HttpContext.Response.StatusCode;
+                        response.ErrorMessage = $"Answer with id {a} not found";
                         return Json(response);
                     }
 
@@ -298,6 +352,8 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 if (userResult == null)
                 {
+                    HttpContext.Response.StatusCode = 409;
+                    response.Status = HttpContext.Response.StatusCode;
                     response.ErrorMessage = "Causes problems while generating result";
                     return Json(response);
                 }
@@ -309,12 +365,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                     UserResponse _user = new UserResponse();
                     var user = await userService.GetById((int)UserId);
 
-                    _user.Id = user.Id;
-                    _user.IsAdmin = user.IsAdmin;
-                    _user.Login = user.Login;
-                    _user.Email = user.Email;
-                    _user.Birthdate = user.Birthdate;
-                    _user.IsMan = user.IsMan;
+                    if(user != null)
+                    {
+                        _user.Id = user.Id;
+                        _user.IsAdmin = user.IsAdmin;
+                        _user.Login = user.Login;
+                        _user.Email = user.Email;
+                        _user.Birthdate = user.Birthdate;
+                        _user.IsMan = user.IsMan;
+                    }
 
                     _userResult.Id = userResult.Id;
                     _userResult.User = _user;
@@ -331,6 +390,8 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 _userResult.Results.Add(new PType(name: PTypeNames.Enterprising.ToString(), value: userResult.E, power: PTypePowerConvertor.Convert(userResult.E)));
                 _userResult.Results.Add(new PType(name: PTypeNames.Conventional.ToString(), value: userResult.C, power: PTypePowerConvertor.Convert(userResult.C)));
 
+                HttpContext.Response.StatusCode = 200;
+                response.Status = HttpContext.Response.StatusCode;
                 response.Data = _userResult;
 
                 return Json(response);
@@ -338,6 +399,8 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             catch
             {
                 ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
+                HttpContext.Response.StatusCode = 409;
+                response.Status = HttpContext.Response.StatusCode;
                 response.ErrorMessage = "Couldn't generate result";
                 return Json(response);
             }
@@ -355,16 +418,23 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
+                ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
+
                 if (!ModelState.IsValid)
-                    return BadRequest();
+                {
+                    HttpContext.Response.StatusCode = 400;
+                    response.Status = HttpContext.Response.StatusCode;
+                    response.ErrorMessage = "Invalid request model.";
+                    return Json(response);
+                }
 
                 var userResult = await userResultService.Create(userResultCreate.UserId,
                                                           userResultCreate.R, userResultCreate.I, userResultCreate.A, userResultCreate.S, userResultCreate.E, userResultCreate.C);
                 
-                ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
-                
                 if (userResult == null)
                 {
+                    HttpContext.Response.StatusCode = 409;
+                    response.Status = HttpContext.Response.StatusCode;
                     response.ErrorMessage = "Causes problems while creating result";
                     return Json(response);
                 }
@@ -372,12 +442,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 UserResponse _user = new UserResponse();
                 var user = await userService.GetById(userResult.UserId);
 
-                _user.Id = user.Id;
-                _user.IsAdmin = user.IsAdmin;
-                _user.Login = user.Login;
-                _user.Email = user.Email;
-                _user.Birthdate = user.Birthdate;
-                _user.IsMan = user.IsMan;
+                if(user != null)
+                {
+                    _user.Id = user.Id;
+                    _user.IsAdmin = user.IsAdmin;
+                    _user.Login = user.Login;
+                    _user.Email = user.Email;
+                    _user.Birthdate = user.Birthdate;
+                    _user.IsMan = user.IsMan;
+                }
 
                 UserResultResponse _userResult = new UserResultResponse();
                 
@@ -396,11 +469,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 response.Data = _userResult;
 
+                HttpContext.Response.StatusCode = 200;
+                response.Status = HttpContext.Response.StatusCode;
                 return Json(response);
             }
             catch
             {
                 ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
+                HttpContext.Response.StatusCode = 409;
+                response.Status = HttpContext.Response.StatusCode;
                 response.ErrorMessage = "Couldn't create user's result";
                 return Json(response);
             }
@@ -418,16 +495,24 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
+                ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
+
                 if (!ModelState.IsValid)
-                        return BadRequest();
+                {
+                    HttpContext.Response.StatusCode = 400;
+                    response.Status = HttpContext.Response.StatusCode;
+                    response.ErrorMessage = "Invalid request model.";
+                    return Json(response);
+                }
 
                 var userResult = await userResultService.Update(userResultUpdate.Id,
                                                         userResultUpdate.R, userResultUpdate.I, userResultUpdate.A, userResultUpdate.S, userResultUpdate.E, userResultUpdate.C);
                 
-                ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
 
                 if (userResult == null)
                 {
+                    HttpContext.Response.StatusCode = 400;
+                    response.Status = HttpContext.Response.StatusCode;
                     response.ErrorMessage = "Invalid identity public key";
                     return Json(response);
                 }
@@ -435,12 +520,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 UserResponse _user = new UserResponse();
                 var user = await userService.GetById(userResult.UserId);
 
-                _user.Id = user.Id;
-                _user.IsAdmin = user.IsAdmin;
-                _user.Login = user.Login;
-                _user.Email = user.Email;
-                _user.Birthdate = user.Birthdate;
-                _user.IsMan = user.IsMan;
+                if(user != null)
+                {
+                    _user.Id = user.Id;
+                    _user.IsAdmin = user.IsAdmin;
+                    _user.Login = user.Login;
+                    _user.Email = user.Email;
+                    _user.Birthdate = user.Birthdate;
+                    _user.IsMan = user.IsMan;
+                }
 
                 UserResultResponse _userResult = new UserResultResponse();
 
@@ -459,11 +547,15 @@ namespace ProfessionalPersonalityTypeTest.Controllers
 
                 response.Data = _userResult;
 
+                HttpContext.Response.StatusCode = 200;
+                response.Status = HttpContext.Response.StatusCode;
                 return Json(response);
             }
             catch
             {
                 ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
+                HttpContext.Response.StatusCode = 409;
+                response.Status = HttpContext.Response.StatusCode;
                 response.ErrorMessage = "Couldn't update user's result";
                 return Json(response);
             }
@@ -482,18 +574,38 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
-                var userResult = await userResultService.GetById(id);
-                var currentUserId = int.Parse(User.Identity.Name);
-                if (userResult.UserId != currentUserId && !User.IsInRole(Roles.Admin))
-                    return Forbid();
-
                 ApiResponse<int> response = new ApiResponse<int>();
+
+                var userResult = await userResultService.GetById(id);
+
+                if(userResult == null)
+                {
+                    HttpContext.Response.StatusCode = 404;
+                    response.Status = HttpContext.Response.StatusCode;
+                    response.ErrorMessage = "Invalid identity public key.";
+                    return Json(response);
+                }
+
+                var currentUserId = int.Parse(User.Identity.Name);
+
+                if (userResult.UserId != currentUserId && !User.IsInRole(Roles.Admin))
+                {
+                    HttpContext.Response.StatusCode = 403;
+                    response.Status = HttpContext.Response.StatusCode;
+                    response.ErrorMessage = $"You do not have permission to delete result with id {id}.";
+                    return Json(response);
+                }
+
+                HttpContext.Response.StatusCode = 200;
+                response.Status = HttpContext.Response.StatusCode;
                 response.Data = await userResultService.Delete(id);
                 return Json(response);
             }
             catch
             {
                 ApiResponse<UserResultResponse> response = new ApiResponse<UserResultResponse>();
+                HttpContext.Response.StatusCode = 409;
+                response.Status = HttpContext.Response.StatusCode;
                 response.ErrorMessage = "Couldn't delete user's result";
                 return Json(response);
             }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Service.IServices;
 using ProfessionalPersonalityTypeTest.Models;
@@ -7,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Models;
+using System.Net;
 
 namespace ProfessionalPersonalityTypeTest.Controllers
 {
@@ -34,11 +34,27 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
+                ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
+
                 var currentUserId = int.Parse(User.Identity.Name);
                 if (id != currentUserId && !User.IsInRole(Roles.Admin))
-                    return Forbid();
+                {
+                    HttpContext.Response.StatusCode = 403;
+                    response.Status = HttpContext.Response.StatusCode;
+                    response.ErrorMessage =  $"You do not have permission to get user with id {id}.";
+                    return Json(response);
+                }
 
                 var user = await userService.GetById(id);
+
+                if (user == null)
+                {
+                    HttpContext.Response.StatusCode = 404;
+                    response.Status = HttpContext.Response.StatusCode;
+                    response.ErrorMessage = "Wrong user identity key.";
+                    return Json(response);
+                }
+
                 UserResponse _user = new UserResponse();
 
                 _user.Id = user.Id;
@@ -48,16 +64,17 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 _user.Birthdate = user.Birthdate;
                 _user.IsMan = user.IsMan;
 
-                ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
-
                 response.Data = _user;
-                
+                HttpContext.Response.StatusCode = 200;
+                response.Status = HttpContext.Response.StatusCode;
                 return Json(response);
             }
             catch
             {
                 ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
-                response.ErrorMessage = $"Couldn't get user";
+                HttpContext.Response.StatusCode = 409;
+                response.Status = HttpContext.Response.StatusCode;
+                response.ErrorMessage = "Couldn't get user";
                 return Json(response);
             }
         }
@@ -73,8 +90,26 @@ namespace ProfessionalPersonalityTypeTest.Controllers
         {
             try
             {
+                ApiResponse<List<UserResponse>> response = new ApiResponse<List<UserResponse>>();
+
+                if (!ModelState.IsValid)
+                {
+                    HttpContext.Response.StatusCode = 400;
+                    response.Status = HttpContext.Response.StatusCode;
+                    response.ErrorMessage = "Invalid request model.";
+                    return Json(response);
+                }
+
                 var users = await userService.GetAll(request.Gender, request.LoginFilter, request.EmailFilter, request.AgeMin, request.AgeMax, request.Role);
                 
+                if(!users.Any())
+                {
+                    HttpContext.Response.StatusCode = 404;
+                    response.Status = HttpContext.Response.StatusCode;
+                    response.ErrorMessage = "Users not found.";
+                    return Json(response);
+                } 
+
                 var _users = users.Select(u => new UserResponse { Id = u.Id,
                                                              IsAdmin = u.IsAdmin,
                                                              Login = u.Login,
@@ -82,16 +117,17 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                                                              Birthdate = u.Birthdate,
                                                              IsMan = u.IsMan }).ToList();
                 
-                ApiResponse<List<UserResponse>> response = new ApiResponse<List<UserResponse>>();
-                
                 response.Data = _users;
-                
+                HttpContext.Response.StatusCode = 200;
+                response.Status = HttpContext.Response.StatusCode;
                 return Json(response);
             }
             catch
             {
                 ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
-                response.ErrorMessage = $"Couldn't get users";
+                HttpContext.Response.StatusCode = 409;
+                response.Status = HttpContext.Response.StatusCode;
+                response.ErrorMessage = "Couldn't get users.";
                 return Json(response);
             }
         }
@@ -111,13 +147,20 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
 
                 if (!ModelState.IsValid)
-                        return BadRequest();
+                {
+                    HttpContext.Response.StatusCode = 400;
+                    response.Status = HttpContext.Response.StatusCode;
+                    response.ErrorMessage = "Invalid request model.";
+                    return Json(response);
+                }
 
                 var user = await userService.Create(userCreate.IsAdmin, userCreate.Login, userCreate.Email, userCreate.Birthdate, userCreate.IsMan, userCreate.Password);
 
                 if (user == null)
                 {
-                    response.ErrorMessage = "User with such login or email already exists";
+                    HttpContext.Response.StatusCode = 400;
+                    response.Status = HttpContext.Response.StatusCode;
+                    response.ErrorMessage =  "User with such login or email already exists";
                     return Json(response);
                 }
 
@@ -131,13 +174,16 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 _user.IsMan = user.IsMan;
 
                 response.Data = _user;
-
+                HttpContext.Response.StatusCode = 200;
+                response.Status = HttpContext.Response.StatusCode;
                 return Json(response);
             }
             catch
             {
                 ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
-                response.ErrorMessage = $"Couldn't create user";
+                HttpContext.Response.StatusCode = 409;
+                response.Status = HttpContext.Response.StatusCode;
+                response.ErrorMessage = "Couldn't create user";
                 return Json(response);
             }
         }
@@ -156,18 +202,34 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             try
             {
                 ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
-                
+
                 if (!ModelState.IsValid)
-                        return BadRequest();
+                {
+                    HttpContext.Response.StatusCode = 400;
+                    response.Status = HttpContext.Response.StatusCode;
+                    response.ErrorMessage = "Invalid request model.";
+                    return Json(response);
+                }
 
                 var currentUserId = int.Parse(User.Identity.Name);
+                
                 if (userUpdate.Id != currentUserId && !User.IsInRole(Roles.Admin))
-                    return Forbid();
+                {
+                    HttpContext.Response.StatusCode = 403;
+                    response.Status = HttpContext.Response.StatusCode;
+                    response.ErrorMessage = "You do not have permission to update this user.";
+                    return Json(response);
+                }
+
+                if (User.IsInRole(Roles.User))
+                    userUpdate.IsAdmin = false;
 
                 var user = await userService.Update(userUpdate.Id, userUpdate.IsAdmin, userUpdate.Login, userUpdate.Email, userUpdate.Birthdate, userUpdate.IsMan, userUpdate.Password);
 
                 if (user == null)
                 {
+                    HttpContext.Response.StatusCode = 400;
+                    response.Status = HttpContext.Response.StatusCode;
                     response.ErrorMessage = "User with such login or email already exists";
                     return Json(response);
                 }
@@ -181,14 +243,17 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 _user.Birthdate = user.Birthdate;
                 _user.IsMan = user.IsMan;
 
+                HttpContext.Response.StatusCode = 200;
+                response.Status = HttpContext.Response.StatusCode;
                 response.Data = _user;
-
                 return Json(response);
             }
             catch
             {
                 ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
-                response.ErrorMessage = $"Couldn't update user";
+                HttpContext.Response.StatusCode = 409;
+                response.Status = HttpContext.Response.StatusCode;
+                response.ErrorMessage = "Couldn't update user";
                 return Json(response);
             }
         }
@@ -206,12 +271,16 @@ namespace ProfessionalPersonalityTypeTest.Controllers
             try
             {
                 ApiResponse<int> response = new ApiResponse<int>();
+                HttpContext.Response.StatusCode = 200;
+                response.Status = HttpContext.Response.StatusCode;
                 response.Data = await userService.Delete(id);
                 return Json(response);
             }
             catch
             {
                 ApiResponse<UserResponse> response = new ApiResponse<UserResponse>();
+                HttpContext.Response.StatusCode = 409;
+                response.Status = HttpContext.Response.StatusCode;
                 response.ErrorMessage = $"Couldn't delete user";
                 return Json(response);
             }

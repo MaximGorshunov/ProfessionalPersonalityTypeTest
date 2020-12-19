@@ -77,19 +77,32 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 ApiResponse<AuthenticateResponse> response = new ApiResponse<AuthenticateResponse>();
 
                 if (!ModelState.IsValid)
-                        return BadRequest();
+                {
+                    HttpContext.Response.StatusCode = 400;
+                    response.Status = HttpContext.Response.StatusCode;
+                    response.ErrorMessage = "Invalid request model.";
+                    return Json(response);
+                }
 
                 response.Data = await Authenticate(model);
 
                 if (response.Success)
+                {
+                    HttpContext.Response.StatusCode = 200;
+                    response.Status = HttpContext.Response.StatusCode;
                     return Json(response);
+                }
 
+                HttpContext.Response.StatusCode = 400;
+                response.Status = HttpContext.Response.StatusCode;
                 response.ErrorMessage = "Username or password is incorrect";
-                return BadRequest(response);
+                return Json(response);
             }
             catch
             {
                 ApiResponse<AuthenticateResponse> response = new ApiResponse<AuthenticateResponse>();
+                HttpContext.Response.StatusCode = 409;
+                response.Status = HttpContext.Response.StatusCode;
                 response.ErrorMessage = "Autorisation error";
                 return Json(response);
             }
@@ -111,12 +124,19 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 ApiResponse<AuthenticateResponse> response = new ApiResponse<AuthenticateResponse>();
 
                 if (!ModelState.IsValid)
-                        return BadRequest();
+                {
+                    HttpContext.Response.StatusCode = 400;
+                    response.Status = HttpContext.Response.StatusCode;
+                    response.ErrorMessage = "Invalid request model.";
+                    return Json(response);
+                }
 
                 var user = await userService.Create(false, model.Login, model.Email, model.Birthdate, model.IsMan, model.Password);
 
                 if (user == null)
                 {
+                    HttpContext.Response.StatusCode = 400;
+                    response.Status = HttpContext.Response.StatusCode;
                     response.ErrorMessage = "User with such login or email already exists";
                     return Json(response);
                 }
@@ -129,14 +149,22 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 response.Data = await Authenticate(authenticateRequest);
 
                 if (response.Success)
+                {
+                    HttpContext.Response.StatusCode = 200;
+                    response.Status = HttpContext.Response.StatusCode;
                     return Json(response);
+                }
 
+                HttpContext.Response.StatusCode = 400;
+                response.Status = HttpContext.Response.StatusCode;
                 response.ErrorMessage = "Username or password is incorrect";
                 return BadRequest(response);
             }
             catch
             {
                 ApiResponse<RegistrationRequest> response = new ApiResponse<RegistrationRequest>();
+                HttpContext.Response.StatusCode = 409;
+                response.Status = HttpContext.Response.StatusCode;
                 response.ErrorMessage = "Registration error";
                 return Json(response);
             }

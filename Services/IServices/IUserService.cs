@@ -12,6 +12,6 @@ namespace Service.IServices
         Task<User> GetById(int id);
         Task<int> Delete(int id);
         Task<User> Create(bool isAdmin, string login, string email, DateTime birthdate, bool isMan, string password);
-        Task<User> Update(int id, bool isAdmin, string login, string email, DateTime birthdate, bool isMan, string password);
+        Task<User> Update(int id, bool? isAdmin, string login, string email, DateTime? birthdate, bool? isMan, string password);
     }
 }
