@@ -2,6 +2,7 @@
 {
     public class UserResultStatistic
     {
+        public int Count { get; set; }
         public Statistic High { get; set; }
         public Statistic Middle { get; set; }
         public Statistic Low { get; set; }

@@ -249,6 +249,9 @@ namespace ProfessionalPersonalityTypeTest.Controllers
                 }
 
                 UserResultStatistic statistic = new UserResultStatistic();
+
+                statistic.Count = userResults.Count();
+
                 statistic.High = new Statistic();
                 statistic.Middle = new Statistic();
                 statistic.Low = new Statistic();
